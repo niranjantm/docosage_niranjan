@@ -19,6 +19,7 @@ function signup() {
             setError("Invalid credentials")
         }
         console.log(formData)
+        setFormData({email:"",password:""})
     }
     return (
         <main className={classes.main}>

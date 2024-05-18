@@ -5,14 +5,19 @@ import Link from "next/link"
 function signup() {
 
     const [formData,setFormData] = useState({email:"",password:""})
+    const [error,setError] = useState("")
     
     
     const handleChange = (e)=>{
+        setError("")
         setFormData({...formData,[e.target.name]:e.target.value});
     }
 
     const handleSubmit = (e)=>{
         e.preventDefault()
+        if(!formData.email || !formData.password){
+            setError("Invalid credentials")
+        }
         console.log(formData)
     }
     return (
@@ -25,15 +30,16 @@ function signup() {
             <form className={classes.form} onSubmit={handleSubmit}>
                 <div>
                     <label>Enter Email</label>
-                    <input type='email' name='email' onChange={handleChange} ></input>
+                    <input type='email' name='email' value={formData.email} onChange={handleChange} ></input>
                 </div>
                 <div>
                     <label>Enter Password</label>
-                    <input type='password'name='password' onChange={handleChange}></input>
+                    <input type='password'name='password' value={formData.password} onChange={handleChange}></input>
                 </div>
                 <button className={classes.button} type="submit">
                     Register
                 </button>
+                {error && <p className={classes.link}>{error}</p>}
 
                 <Link className={classes.link} href={"./resetpassword"}>Forgot password</Link>
 

@@ -26,7 +26,7 @@ function signup() {
             <form className={classes.form} onSubmit={handleSubmit}>
                 <div>
                     <label>Enter Registered Email</label>
-                    <input type='email' name='email' onChange={handleChange} ></input>
+                    <input type='email' name='email' value={formData.email} onChange={handleChange} ></input>
                 </div>
                 
                 <button className={classes.button} type="submit">

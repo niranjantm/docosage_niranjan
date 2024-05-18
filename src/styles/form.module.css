@@ -1,0 +1,51 @@
+.mainDiv{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:space-evenly;
+    height:80%;
+    width: 80%;
+    background-color: rgb(205, 248, 205);
+    border-radius: 10px;
+
+}
+
+.main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.button{
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.form{
+    margin-bottom: 100px;
+    
+    padding: 20px;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.form div{
+    display: flex;
+    flex-direction: column;
+    justify-content:center;
+    width:80%;
+    gap: 5px;
+}
+
+.form input{
+    padding: 10px;
+    border-radius: 10px;
+   
+}
+.link{
+    color: red;
+    padding: 0 5px 0 5px;
+}

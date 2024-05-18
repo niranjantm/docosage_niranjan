@@ -4,6 +4,7 @@ import Link from "next/link"
 
 function signup() {
 
+    
     const [formData,setFormData] = useState({email:""})
     
     

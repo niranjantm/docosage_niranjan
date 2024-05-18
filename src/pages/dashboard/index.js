@@ -4,7 +4,7 @@ function index() {
   return (
     <>
     <h1>
-        HELLO
+        
     </h1>
     </>
   )

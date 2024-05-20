@@ -38,7 +38,7 @@ function signup() {
                     <input type='password'name='password' value={formData.password} onChange={handleChange}></input>
                 </div>
                 <button className={classes.button} type="submit">
-                    Register
+                    Signin
                 </button>
                 {error && <p className={classes.link}>{error}</p>}
 

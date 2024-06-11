@@ -1,0 +1,184 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2% 10% 10% 10%;
+    gap: 20px;
+}
+
+.customerOrDoctorButtonContainer {
+    width: 70%;
+    border: none;
+    display: flex;
+    background-color: #ccc;
+    border-radius: 999rem;
+}
+
+.active {
+    background-color: rgb(185, 174, 232);
+    color: rgb(50, 10, 232);
+}
+
+.inactive {
+    background-color: transparent;
+    color: gray
+}
+
+.customerOrDoctorButtonContainer button {
+    padding: 10px 10px;
+    width: 100%;
+    border-radius: 999rem;
+    border: none;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    width: 70%;
+
+}
+
+.form>div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 4px;
+
+}
+
+.form div label {
+    font-weight: bold;
+}
+
+.formDiv input {
+    height: 40px;
+    padding: 0 3px;
+    border-radius: 5px;
+    border: 2px solid rgb(211, 208, 208)
+}
+
+.form div input[type=number]::-webkit-inner-spin-button,
+.form div input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.form div input[type=number] {
+    -moz-appearance: textfield;
+    /* Firefox */
+}
+
+.passwordContainer {
+    height: 40px;
+    padding-right: 2px;
+    border-radius: 5px;
+    border: 2px solid rgb(211, 208, 208);
+    display: flex;
+    flex-direction: row;
+}
+
+.passwordContainer input {
+    width: 95%;
+    padding: 0 3px;
+    border: none;
+    outline: none;
+}
+
+.passwordContainer button {
+    background-color: transparent;
+    border: none;
+}
+
+.checkboxContainer{
+    display: flex;
+    gap:10px;
+    justify-content: center;
+    margin-top: 10px;
+    
+}
+.checkboxContainer input{
+    width: 20px;
+}
+
+.signupButtonContainer{
+    align-items: center;
+    margin: 10px 0;
+}
+.signupButton{
+    padding: 10px;
+    width: 200px;
+    border-radius: 10px;
+    color: rgb(92, 62, 229) ;
+    border: none;
+}
+
+.signupButton:not(:disabled):hover{
+    color: white;
+    background: linear-gradient(to right,rgb(163, 145, 241),rgb(102, 71, 240));
+}
+
+.signupButton:disabled{
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    
+}
+
+.googleFacebookMainContainer{
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.googleFacebookMainContainer p{
+    margin-bottom:15px ;
+    font-size:medium;
+    color: gray;
+    text-align: center;
+}
+
+.googleFacebookContainer{
+    display: flex;
+    gap: 5px;
+}
+
+.googleFacebookContainer button{
+    padding: 10px;
+    width: 100px;
+    border-radius: 10px;
+}
+.signupGoogleButton{
+    background-color: transparent;
+    border: 2px solid gray;
+    color: red;
+}
+.signupFacebookButton{
+    background-color: transparent;
+    border: 2px solid gray;
+    color: blue;
+}
+
+.signupGoogleButton:hover{
+    color: white;
+    background-color: rgb(217, 73, 73);
+}
+.signupFacebookButton:hover{
+    color: white;
+    background-color: rgb(67, 67, 195);
+}
+.signinContainer{
+    display: flex;
+    gap: 2px;
+}
+.signinContainer button{
+    border: none;
+    background-color: transparent;
+    color: rgb(93, 8, 239);
+}
+
+.error{
+    color: red;
+}

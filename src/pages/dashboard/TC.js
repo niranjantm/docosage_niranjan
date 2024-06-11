@@ -27,8 +27,8 @@ function TC() {
                 <p>I have read and agree to these Terms and Conditions</p>
             </div>
             <div className={classes.button_container}>
-                <button>Cancel</button>
-                <button className={classes.agree_button} disabled = {!disable} >Agree</button>
+                <button type='button'>Cancel</button>
+                <button className={classes.agree_button} disabled = {!disable} type='button'>Agree</button>
             </div>
 
         </main>

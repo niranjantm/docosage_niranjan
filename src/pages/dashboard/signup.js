@@ -76,7 +76,7 @@ function Signup() {
                     </div>
 
                 </div>
-                <p className={classes.error}>{error}</p>
+                {error && <p className={classes.error}>{error}</p>}
 
                 <div>
                     <div className={classes.checkboxContainer}>

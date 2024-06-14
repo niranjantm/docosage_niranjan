@@ -1,0 +1,112 @@
+.main{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    padding: 2% 10% 10% 10%;
+    gap: 20px;
+}
+
+.introContainer{
+    display: flex;
+    justify-content: center;
+   
+}
+
+.genderContainer{
+    width: 60%;
+    justify-content: center;
+    display: flex;
+    gap: 20px;
+}
+.genderContainer>button{
+    
+    height: 250px;
+    width: 230px;
+    border-radius: 10px;
+    border:2px solid gray;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: transparent;
+}
+
+.genderContainer>button>div{
+   background-color: rgb(231, 228, 228);
+   border: none;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   padding: 20px;
+   border-radius:100%;
+   margin-bottom: 10px;
+   color: rgb(72, 71, 71);
+}
+
+.genderContainer>button:hover{
+    border: 2px solid rgb(92, 62, 229);
+}
+.genderContainer>button:hover div{
+    background-color: rgb(92, 62, 229);
+    color: white;
+}
+
+.genderContainer>button:focus{
+    border: 2px solid rgb(92, 62, 229);
+}
+
+.genderContainer>button:focus div{
+    background-color: rgb(92, 62, 229);
+    color: white;
+}
+
+.buttonContainer{
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    gap: 10px;
+    
+    width: 40%;
+}
+.buttonContainer button:not(:disabled){
+    padding: 10px 0;
+    border: 2px solid rgb(204, 202, 202);
+    border-radius: 5px;
+    background-color: transparent;
+    color: gray;
+    
+}
+.buttonContainer button:not(:disabled):hover{
+    background:linear-gradient(to right, rgb(163, 145, 241),rgb(102, 71, 240));
+    border: 2px solid rgb(163, 145, 241);
+    color: white;
+}
+
+
+@media screen and (max-width:767px) {
+    .genderContainer{
+        flex-direction: column;
+        align-items: center;
+    }
+    .genderContainer>button{
+        height: 190px;
+        width: 170px;
+    }
+    .buttonContainer{
+        width: 100%;
+    }
+}
+
+.error{
+    color: red;
+}
+.nextButton{
+    background-color: #8b8989;
+    color: #ebe6e6;
+    cursor: not-allowed;
+    padding: 10px 0;
+    border: 2px solid rgb(204, 202, 202);
+    border-radius: 5px;
+    
+}

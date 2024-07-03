@@ -1,18 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import classes from "@/styles/signup.module.css"
+import axios from 'axios';
 
 function Signup() {
     const [user, setUser] = useState('customer');
     const [showPassword, setShowPassword] = useState(false);
-    const [formData, setformData] = useState({ userName: "", email: "", phoneNumber: "", password: ""});
+    const [formData, setformData] = useState({ name: "", email: "", phone_number: "", password_hash: ""});
     const [disable,setDisable] = useState(false)
     const [error,setError] = useState("");
 
     const handleUserType=(e)=>{
         setUser(e.target.name);
-        setformData({ userName: "", email: "", phoneNumber: "", password: ""})
+        setformData({ name: "", email: "", phone_number: "", password_hash: ""})
     }
 
     const handleChange = (e) => {
@@ -24,15 +25,36 @@ function Signup() {
         setDisable(e.target.checked);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        if(!formData.userName || !formData.email || !formData.password || !formData.phoneNumber){
+        if(!formData.name || !formData.email || !formData.password_hash || !formData.phone_number){
             setError("Invalid informations!")
         }
         else{
-            console.log({userType:user,...formData})
+            console.log({account_type:user,...formData})
+            try{
+                const res = await axios.post("http://127.0.0.1:8000/register/",{account_type:user,...formData})
+                console.log(res.data);
+            }catch(error){
+                console.log("ERROR :--",error)
+            }
+
         }
     }
+
+    useEffect(()=>{
+        const fetchData = async ()=>{
+            try{
+                const res = await fetch('http://127.0.0.1:8000/users/')
+                const data = await res.json()
+                console.log(data.results)
+            }catch(error){
+                console.log("ERROR :--",error)
+            }
+           
+        }
+        // fetchData();
+    },[])
 
     return (
         <main className={classes.main}>
@@ -49,7 +71,7 @@ function Signup() {
                     <label>
                         Your Name
                     </label>
-                    <input type='text' name='userName'required onChange={handleChange} value={formData.userName}></input>
+                    <input type='text' name='name'required onChange={handleChange} value={formData.name}></input>
                 </div>
                 <div className={classes.formDiv}>
                     <label>
@@ -61,7 +83,7 @@ function Signup() {
                     <label>
                         Phone Number
                     </label>
-                    <input type='number' name='phoneNumber' required value={formData.phoneNumber} onChange={handleChange} className={classes.numberInput}></input>
+                    <input type='number' name='phone_number' required value={formData.phone_number} onChange={handleChange} className={classes.numberInput}></input>
                 </div>
                 <div>
                     <label>
@@ -70,7 +92,7 @@ function Signup() {
 
                     <div className={classes.passwordContainer}>
 
-                        <input type={showPassword ? 'text' : 'password'}  value={formData.password} onChange={handleChange} name='password'></input>
+                        <input type={showPassword ? 'text' : 'password'}  value={formData.password_hash} onChange={handleChange} name='password_hash'></input>
                         <button type='button' onClick={() => setShowPassword(!showPassword)}><>{showPassword===true?<IoEyeOutline size={20} />:<IoEyeOffOutline size={20}/>}</></button>
 
                     </div>

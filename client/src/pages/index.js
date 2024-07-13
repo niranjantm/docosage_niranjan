@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   return (
     <>
-     <Link className={styles.link}  href={"/dashboard/signup"}>signup</Link>
+     <Link className={styles.link}  href={"/dashboard/TC"}>signup</Link>
     </>
   );
 }

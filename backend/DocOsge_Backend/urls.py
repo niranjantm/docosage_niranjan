@@ -22,8 +22,10 @@ from DocOsge_Backend.DocOsge import views
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet,basename='user')
 router.register(r'groups', views.GroupViewSet, basename='groups')
-router.register(r'loginusers', views.LoginUserViewSet, basename='loginusers')
-router.register(r'register',views.RegisterUser, basename='register')
+router.register(r'login', views.LoginUserViewSet, basename='loginusers')
+router.register(r'register',views.RegisterUserViewSet, basename='register')
+router.register(r'passwordreset',views.PasswordResetRequestViewSet, basename='passwordreset')  
+router.register(r'passwordconfirm',views.PasswordResetConfirmViewSet, basename='passwordconfirm')  
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [

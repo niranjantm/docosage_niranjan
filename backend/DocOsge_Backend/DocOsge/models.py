@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
 
+
 # Create your models here.
 
 class LoginUsers(models.Model):
@@ -22,15 +23,18 @@ class Users(models.Model):
     
     password_hash = models.CharField(max_length=255,null=False,blank=False)
     
+  
+    
     def __str__(self):
-        return self.name
+        return self.email
     
     class Meta:
         db_table = 'registered_users'
         app_label = 'DocOsge'
     
     def save(self,*args,**kwargs):
-        self.password_hash = make_password(self.password_hash)
+        if not self.pk: 
+            self.password_hash = make_password(self.password_hash)
         super().save(*args,**kwargs)
     
 class AccountTypes(models.Model):

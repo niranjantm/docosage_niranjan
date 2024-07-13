@@ -15,15 +15,16 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = ['url', 'name']
 
-class LoginUserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = LoginUsers
-        fields = ['url', 'loginId', 'loginName']
+# class LoginUserSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = LoginUsers
+#         fields = ['url', 'loginId', 'loginName']
         
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['user_id',"name","email",'phone_number']
+        # fields = ['user_id',"name","email",'phone_number']
+        fields = "__all__"
 
 class AccountTypesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,8 +32,15 @@ class AccountTypesSerializer(serializers.ModelSerializer):
         fields = ['account_type_id','account_type']
         
 
-
-
+class LoginUserSerializer(serializers.Serializer):
+    
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+    
+class PasswordResetSerializer(serializers.Serializer):
+    
+    email = serializers.EmailField()
+    
         
 
         

@@ -82,6 +82,9 @@
     border: 2px solid rgb(163, 145, 241);
     color: white;
 }
+/* .buttonContainer button:disabled{
+    background-color: #8b8989;
+} */
 
 
 @media screen and (max-width:767px) {
@@ -101,11 +104,11 @@
 .error{
     color: red;
 }
-.nextButton{
+.nextButton:disabled{
     background-color: #8b8989;
     color: #ebe6e6;
-    cursor: not-allowed;
     padding: 10px 0;
+    cursor: not-allowed;
     border: 2px solid rgb(204, 202, 202);
     border-radius: 5px;
     

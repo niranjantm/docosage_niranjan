@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { IoIosMale,IoIosFemale } from "react-icons/io";
 import classes from "@/styles/gender.module.css"
 
@@ -12,6 +12,7 @@ function Gender() {
     const handleClick=(e)=>{
         setError("")
         setGender({gender:e.target.value});
+
     }
 
     const handleNext=(e)=>{

@@ -42,8 +42,8 @@
 }
 
 .form>div {
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
     width: 100%;
     gap: 4px;
 
@@ -51,6 +51,11 @@
 
 .form div label {
     font-weight: bold;
+}
+
+.formDiv{
+    display: flex;
+    flex-direction: column;
 }
 
 .formDiv input {
@@ -106,6 +111,8 @@
 .signupButtonContainer{
     align-items: center;
     margin: 10px 0;
+    display: flex;
+    justify-content: center;
 }
 .signupButton{
     padding: 10px;
@@ -172,13 +179,75 @@
 .signinContainer{
     display: flex;
     gap: 2px;
+    align-items: baseline;
 }
 .signinContainer button{
     border: none;
     background-color: transparent;
     color: rgb(93, 8, 239);
+    font-weight: bold;
 }
 
 .error{
     color: red;
+}
+
+.rememberMeAndForgotPassword{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+.rememberMeAndForgotPassword div{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+.rememberMeAndForgotPassword input{
+    width: 20px;
+}
+
+.forgotPasswordButton{
+    border: none;
+    background-color: transparent;
+    color: rgb(93, 8, 239);
+    font-weight: bold;
+}
+
+.forgotPasswordButton:hover{
+    cursor: pointer;
+}
+
+@media screen and (max-width:600px){
+    .form{
+        width: 90%;
+    }
+    
+}
+
+.forgotPasswordPara{
+    text-align: center;
+}
+
+.passwordValidations{
+    display: flex;
+    flex-direction: column;
+    align-items:center
+    
+}
+
+.passwordValidations div{
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+}
+
+.passwordValidations div p{
+    font-size: medium;
+    
+}
+.success{
+    color: rgb(26, 224, 26);
+    font-weight: 700;
+    
 }

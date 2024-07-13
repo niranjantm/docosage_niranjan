@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import classes from "@/styles/TC.module.css"
+import { useRouter } from 'next/router'
+
 
 function TC() {
 
     const [disable,setDisable] = useState(false)
+    const router = useRouter()
 
     const agreeHandler =(e)=>{
        setDisable(e.target.checked);
@@ -28,7 +31,7 @@ function TC() {
             </div>
             <div className={classes.button_container}>
                 <button type='button'>Cancel</button>
-                <button className={classes.agree_button} disabled = {!disable} type='button'>Agree</button>
+                <button className={classes.agree_button} disabled = {!disable} type='button' onClick={()=>router.push('signup')} >Agree</button>
             </div>
 
         </main>

@@ -1,0 +1,74 @@
+.main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10% 10% 10% 10%;
+    gap: 20px;
+}
+.inputContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 80%;
+    
+}
+.inputContainer h3{
+    text-align: center;
+    font-size: 40px;
+    color:rgb(92, 62, 229) ;
+}
+.inputSlider{
+    -webkit-appearance: none;
+    height: 20px; 
+    background: #ddd;
+    outline: none;
+    opacity: 0.9;
+    transition: opacity .15s ease-in-out;
+    border-radius: 6px; 
+}
+.inputSlider::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    width: 25px; /* Thumb width */
+    height: 25px; /* Thumb height */
+    background: rgb(92, 62, 229); /* Thumb color */
+    cursor: pointer;
+    border-radius: 50%; /* Makes the thumb circular */
+}
+.ageinputContainer{
+    display: flex;
+    margin-top: 30px;
+    flex-direction: column;
+    gap: 10px;
+    width: 80%;
+}
+.ageinputContainer h3{
+    text-align: center;
+    font-size: 40px;
+    color:rgb(92, 62, 229) ;
+}
+.buttonContainer{
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    width: 50%;
+}
+.nextButton{
+    background: linear-gradient(to right,rgb(163, 145, 241),rgb(102, 71, 240));
+    color: white;
+    width: 90%;
+    padding: 10px 0;
+    border-radius: 7px;
+    font-weight: bold;
+    border: none;
+}
+.skipButton{
+    width: 90%;
+    padding: 10px 0;
+    border-radius: 7px;
+    background-color: transparent;
+    color: rgb(92, 62, 229);
+    font-weight: bold;
+    border: none;
+}

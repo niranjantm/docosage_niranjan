@@ -25,6 +25,9 @@ class UsersSerializer(serializers.ModelSerializer):
         model = Users
         # fields = ['user_id',"name","email",'phone_number']
         fields = "__all__"
+        extra_kwargs = {
+            'password_hash':{'write_only':True}
+        }
 
 class AccountTypesSerializer(serializers.ModelSerializer):
     class Meta:

@@ -73,6 +73,16 @@ class SocialAccounts(models.Model):
     # class Meta:
     #     db_table = 'social_accounts'
     #     app_label = 'DocOsge_Backend.DocOsge'
+class UserInformation(models.Model):
+    user = models.ForeignKey(Users('user_id'),on_delete=models.CASCADE)
+    height = models.IntegerField(default=0)
+    weight = models.IntegerField(default=0,)
+    age = models.IntegerField(default=0)
+    getInBed = models.TimeField(default=None)
+    wakeUp = models.TimeField(default=None)
+    calories = models.IntegerField(default=0)
+    steps =models.IntegerField(default=0)
+    
     
     
     

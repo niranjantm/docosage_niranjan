@@ -4,6 +4,7 @@ import { IoEyeOutline } from "react-icons/io5";
 import classes from "@/styles/signup.module.css"
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import useAuth from '@/hooks/useAuth';
 
 function Login() {
     const [user, setUser] = useState('customer');
@@ -12,11 +13,14 @@ function Login() {
     const [disable,setDisable] = useState(false)
     const [error,setError] = useState("");
     const router = useRouter();
+    const {userAuth,setUserAuth} = useAuth()
 
-    // const handleUserType=(e)=>{
-    //     setUser(e.target.name);
-    //     setformData({ email: "", password_hash: ""})
-    // }
+
+    const handleUserType=(e)=>{
+        setUser(e.target.name);
+        
+    }
+    
     
 
     const handleChange = (e) => {
@@ -32,17 +36,24 @@ function Login() {
         }
         else{
             try{
-                const res = await axios.post("http://127.0.0.1:8000/login/",formData)
+                const res = await axios.post("http://127.0.0.1:8000/login/",{userType:user,...formData})
                 console.log(res.data);
                 if(res.status===200){
-                    
+                    setUserAuth(res.data)
+                    router.push("/")
                 }
 
             }catch(error){
-                setError("User not found!")
+                if(error?.response?.status===406){
+                    setError("Invalid credentials")
+                }else{
+                    setError("Something went wrong!")
+                }
+                
             }
 
         }
+        
     }
 
     return (
@@ -50,10 +61,10 @@ function Login() {
 
             <h1>Sign in</h1>
 
-            {/* <div className={classes.customerOrDoctorButtonContainer}>
+            <div className={classes.customerOrDoctorButtonContainer}>
                 <button type='button' name='customer' onClick={handleUserType} className={user === 'customer' ? classes.active : classes.inactive}>Customer</button>
                 <button type='button' name='doctor' onClick={handleUserType} className={user === 'doctor' ? classes.active : classes.inactive}>Doctor</button>
-            </div> */}
+            </div>
 
             <form className={classes.form} onSubmit={handleSubmit}>
                 {/* <div className={classes.formDiv}>

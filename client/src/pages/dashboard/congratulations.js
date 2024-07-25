@@ -1,7 +1,13 @@
 import React from 'react'
 import classes from "@/styles/congratulations.module.css"
+import { useRouter } from 'next/router'
+import { useContext } from 'react'
+import AuthContext from '@/context/AuthContext'
 
-function congratulation() {
+function congratulations() {
+    const router = useRouter()
+    const {userAuth} = useContext(AuthContext)
+    console.log(userAuth)
   return (
    <main className={classes.main}>
     <div>
@@ -16,11 +22,11 @@ function congratulation() {
         </p>
     </div>
     <div className={classes.buttonContainer}>
-        <button>Setup Goal and other information</button>  
-        <button>Go to home</button>  
+        <button type='button' className={classes.setgoalButton} onClick={()=>router.push('/information/gender')}>Setup Goal and other information</button>  
+        <button type='button' className={classes.homeButton } onClick={()=>router.push('/')}>Go to home</button>  
     </div>
    </main>
   )
 }
 
-export default congratulation
+export default congratulations

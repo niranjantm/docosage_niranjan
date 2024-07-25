@@ -190,6 +190,7 @@
 
 .error{
     color: red;
+    text-align: center;
 }
 
 .rememberMeAndForgotPassword{
@@ -220,6 +221,9 @@
 
 @media screen and (max-width:600px){
     .form{
+        width: 90%;
+    }
+    .customerOrDoctorButtonContainer{
         width: 90%;
     }
     

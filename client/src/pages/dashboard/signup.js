@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState ,useContext} from 'react'
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import classes from "@/styles/signup.module.css"
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import AuthContext from '@/context/AuthContext';
 
 function Signup() {
     const [user, setUser] = useState('customer');
@@ -12,6 +13,7 @@ function Signup() {
     const [disable,setDisable] = useState(false)
     const [error,setError] = useState("");
     const router = useRouter()
+    const {userAuth,setUserAuth} = useContext(AuthContext)
 
     const handleUserType=(e)=>{
         setUser(e.target.name);
@@ -32,47 +34,46 @@ function Signup() {
         if(!formData.name || !formData.email || !formData.password_hash || !formData.phone_number){
             setError("Invalid informations!")
         }
+        
         else{
-            console.log({account_type:user,...formData})
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
+            let passwordText = passwordRegex.test(formData.password_hash)
+            if(!passwordText){
+                setError("Password must contain at least one lowercase letter, one uppercase letter, one digit, and must have a length of more than or equal to 8 characters")
+            }
+
+            else{
+
+           
             try{
                 const res = await axios.post("http://127.0.0.1:8000/register/",{account_type:user,...formData})
                 console.log(res.data);
                 if(res.status===201){
-                    router.push('gender')
+
+                    setUserAuth(res.data)
+                    router.push('congratulations')
                 }
             }catch(error){
-                if(error.response.data.email){
+                if(error?.response?.data?.email){
                     setError("User with this email already exists.")
                 }
-                else if(error.response.data.phone_number){
+                else if(error?.response?.data?.phone_number){
                     setError("User with this phone number already exists.")
                 }
                 else{
                     setError(error.message)
                 }
             }
-
+        }
         }
     }
 
-    useEffect(()=>{
-        const fetchData = async ()=>{
-            try{
-                const res = await fetch('http://127.0.0.1:8000/users/')
-                const data = await res.json()
-                console.log(data.results)
-            }catch(error){
-                console.log("ERROR :--",error)
-            }
-           
-        }
-        // fetchData();
-    },[])
+    
 
     return (
         <main className={classes.main}>
 
-            <h1>Sign in</h1>
+            <h1>Sign up</h1>
 
             <div className={classes.customerOrDoctorButtonContainer}>
                 <button type='button' name='customer' onClick={handleUserType} className={user === 'customer' ? classes.active : classes.inactive}>Customer</button>

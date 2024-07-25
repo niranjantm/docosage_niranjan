@@ -52,19 +52,17 @@ function index() {
                 setError("Invalid password")
             }
             else{
-                const res = await axios.post("http://127.0.0.1:8000/passwordconfirm/",{"user":user,"newPassword":formData.newPassword})
+                const res = await axios.patch("http://127.0.0.1:8000/passwordconfirm/",{"user":user,"newPassword":formData.newPassword})
                 setError("")    
                 setStatus("Password reset successfull")
             }
         }
         catch(error){
-            if(error.response.data){
-                setError(error.response.data)
-            }else{
                 setError("Some thing went wrong!")
             }
+        
             
-        }
+        
     }
     useEffect(()=>{
     },[])

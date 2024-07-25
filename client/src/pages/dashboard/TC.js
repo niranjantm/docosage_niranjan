@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
 import classes from "@/styles/TC.module.css"
 import { useRouter } from 'next/router'
+import Layout from '@/components/Navbar/layout'
+
 
 
 function TC() {
 
     const [disable,setDisable] = useState(false)
     const router = useRouter()
+
+    
 
     const agreeHandler =(e)=>{
        setDisable(e.target.checked);
@@ -37,5 +41,6 @@ function TC() {
         </main>
     )
 }
+
 
 export default TC

@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { IoIosMale,IoIosFemale } from "react-icons/io";
 import classes from "@/styles/gender.module.css"
+import { useRouter } from 'next/router';
 
 
 
@@ -8,6 +9,7 @@ function Gender() {
 
     const [gender,setGender]= useState({gender:""});
     const [error,setError] = useState("");
+    const router = useRouter()
 
     const handleClick=(e)=>{
         setError("")
@@ -20,7 +22,7 @@ function Gender() {
             setError("Please select your gender!");
         }
         else{
-            console.log(gender);
+            router.push('height')
         }
     }
     return (

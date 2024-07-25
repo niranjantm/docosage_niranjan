@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group, User
-from .models import LoginUsers,Users,AccountTypes,UserAccountTypes,SocialAccounts
+from .models import LoginUsers,Users,AccountTypes,UserAccountTypes,SocialAccounts,UserInformation
 from rest_framework import serializers
 
 
@@ -43,6 +43,11 @@ class LoginUserSerializer(serializers.Serializer):
 class PasswordResetSerializer(serializers.Serializer):
     
     email = serializers.EmailField()
+    
+class UserInformationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserInformation
+        fields = '__all__'
     
         
 

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.hashers import make_password
 
 
+
 # Create your models here.
 
 class LoginUsers(models.Model):
@@ -75,14 +76,14 @@ class SocialAccounts(models.Model):
     #     app_label = 'DocOsge_Backend.DocOsge'
 class UserInformation(models.Model):
     user = models.ForeignKey(Users('user_id'),on_delete=models.CASCADE)
-    height = models.IntegerField(default=0)
-    weight = models.IntegerField(default=0,)
-    age = models.IntegerField(default=0)
-    getInBed = models.TimeField(default=None)
-    wakeUp = models.TimeField(default=None)
-    calories = models.IntegerField(default=0)
-    steps =models.IntegerField(default=0)
-    
+    height = models.IntegerField(null=True,blank=True)
+    weight = models.IntegerField(null=True,blank=True)
+    age = models.IntegerField(null=True,blank=True)
+    getInBed = models.TimeField(null=True,blank=True)
+    wakeUp = models.TimeField(null=True,blank=True)
+    calories = models.IntegerField(null=True,blank=True)
+    steps =models.IntegerField(null=True,blank=True)
+    gender = models.CharField(max_length=10,null=True,blank=True)
     
     
     

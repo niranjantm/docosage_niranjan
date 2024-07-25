@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import classes from "@/styles/signup.module.css"
+// import axios from "../api/axios";
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import useAuth from '@/hooks/useAuth';
@@ -36,9 +37,12 @@ function Login() {
         }
         else{
             try{
-                const res = await axios.post("http://127.0.0.1:8000/login/",{userType:user,...formData})
+                const res = await axios.post("http://127.0.0.1:8000/login/",{userType:user,...formData},{headers:{
+                    "Content-Type":"application/json"
+                },
+            withCredentials:true})
                 console.log(res.data);
-                if(res.status===200){
+                if(res?.status===200){
                     setUserAuth(res.data)
                     router.push("/")
                 }

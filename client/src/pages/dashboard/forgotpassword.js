@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import classes from "@/styles/signup.module.css"
-import axios from 'axios';
+import axios from '../api/axios';
 import { useRouter } from 'next/router';
 
 
@@ -28,7 +28,7 @@ function ForgotPassword() {
         }
         else{
             try{
-                const res = await axios.post("http://127.0.0.1:8000/passwordreset/",formData)
+                const res = await axios.post("passwordreset/",formData)
                 if(res.status===200){
                     router.push(res.data.url)
                 } 

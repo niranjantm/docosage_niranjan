@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { IoIosMale,IoIosFemale } from "react-icons/io";
 import classes from "@/styles/gender.module.css"
 import { useRouter } from 'next/router';
+import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 
 
 
@@ -10,6 +11,8 @@ function Gender() {
     const [gender,setGender]= useState({gender:""});
     const [error,setError] = useState("");
     const router = useRouter()
+    const axiosPrivate = useAxiosPrivate()
+
 
     const handleClick=(e)=>{
         setError("")
@@ -17,12 +20,19 @@ function Gender() {
 
     }
 
-    const handleNext=(e)=>{
+    const handleNext= async(e)=>{
         if(!gender.gender){
             setError("Please select your gender!");
         }
         else{
-            router.push('height')
+            try{
+                const response = await axiosPrivate.post('updateuserinfo/',{"gender":gender.gender})
+                if(response.status===200){
+                    router.push('height')
+                }
+            }catch(error){
+                console.log(error)
+            }
         }
     }
     return (

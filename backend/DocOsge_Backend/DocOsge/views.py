@@ -1,16 +1,18 @@
 from django.contrib.auth.models import Group, User
-from .models import LoginUsers,UserAccountTypes,Users
+from .models import LoginUsers,UserAccountTypes,Users,UserInformation
 from rest_framework import permissions, viewsets
 from rest_framework import status
 from rest_framework.response import Response
+from django.http import HttpResponse
 from django.contrib.auth.hashers import check_password,make_password
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 # from rest_framework_simplejwt.authentication import JWTAuthentication
 from .middlewares import CustomJWTAuthentication
-
-from DocOsge_Backend.DocOsge.serializers import GroupSerializer, UserSerializer, LoginUserSerializer,UsersSerializer,AccountTypesSerializer,LoginUserSerializer,PasswordResetSerializer
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework.decorators import action
+from DocOsge_Backend.DocOsge.serializers import GroupSerializer, UserSerializer, LoginUserSerializer,UsersSerializer,AccountTypesSerializer,LoginUserSerializer,PasswordResetSerializer,UserInformationSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     
@@ -71,15 +73,17 @@ class RegisterUserViewSet(viewsets.ViewSet):
             response_data.update(accoutTypeSerializer.data)
             
             refresh = RefreshToken.for_user(user)
-            response_data['access_token'] = str(refresh.access_token)
-
+            response_data['access'] = str(refresh.access_token)
+            response_data['refresh'] = str(refresh)
+            
             response = Response(response_data,status=status.HTTP_201_CREATED)
             response.set_cookie(
-                key='refresh_token',
+                key='refresh',
                 value=str(refresh),
                 httponly=True,
                 secure=False,
-                samesite='Lax'
+                samesite='Lax',
+                expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
             )
             return response
         except Exception as error:
@@ -113,17 +117,21 @@ class LoginUserViewSet(viewsets.ViewSet):
                         user_dict.pop("password_hash")
                         
                         refresh = RefreshToken.for_user(user)
-                        user_dict['access_token'] = str(refresh.access_token)
+                        user_dict['access'] = str(refresh.access_token)
+                        user_dict['refresh'] = str(refresh)
                         
                         response = Response(user_dict,status=status.HTTP_200_OK)
                        
-                        response.set_cookie(
-                        key='refresh_token',
-                        value=str(refresh),
-                        httponly=True,
-                        secure=False,
-                        samesite='Lax'
-                        )
+                        # response.set_cookie(
+                        #     key='refresh',
+                        #     value=str(refresh),
+                        #     httponly=True,
+                        #     secure=False,
+                        #     samesite=None,
+                        #     domain='127.0.0.1',
+                        #     path='/',
+                        #     expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
+                        # )
                         return response
                     else:
                         return Response("invalid credentials",status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -175,7 +183,7 @@ class PasswordResetConfirmViewSet(viewsets.ViewSet):
     def password_reset(self,request):
         
         newPassword = request.data.get("newPassword")
-        print(newPassword)
+        
         try:
             token = request.data.get('user')
     
@@ -201,17 +209,58 @@ class UserInfoUpdateViewSet(viewsets.ViewSet):
     authentication_classes = [CustomJWTAuthentication]
     # permission_classes = [IsAuthenticated]
     
-    def update_info(self,request): #PATCH METHOD
+    def create(self,request):
         
         if request.user is None:
             return Response({"error":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
         
+        verifiedUser = request.user
+        request.data["user"] = verifiedUser["user_id"]
         
         
-        return Response({"ok":True},status=status.HTTP_200_OK)
-
-
+        userInfoSerializer = UserInformationSerializer(data=request.data)
+        
+        try:
+            user = UserInformation.objects.get(user_id=verifiedUser["user_id"])
+            if(user):
+                request.data.pop('user')
+                
+                for key, value in request.data.items():
+                    setattr(user,key,value)
+                user.save()
+                return Response("user info updated",status=status.HTTP_200_OK)
+            
+        except:
+            if(userInfoSerializer.is_valid()):
+                userInfoSerializer.save()
+                return Response("user info created",status=status.HTTP_200_OK)
+            else:
+                return Response(userInfoSerializer.errors,status=status.HTTP_400_BAD_REQUEST)
+       
         
 
+# -----------------------------------Token-refresh-view---------------------------------------------------------- 
+
+class CustomTokenRefreshView(TokenRefreshView):
+        
+    def post(self,request,*args, **kwargs):
+        
+        # print(request.COOKIES.get('refresh'))
+        
+        # refresh_token = request.COOKIES.get('refresh_token')
+        
+        # if refresh_token is None:
+        #     return Response({"error": "No refresh token found in cookies"}, status=status.HTTP_400_BAD_REQUEST)
+        # cookie = request.COOKIES.get('refresh_token')
+        
+        response = super().post(request, *args, **kwargs)
+        
+        
+        data = response.data
+        
+        # refresh_token = data.get("refresh")
+        
+        
+        return Response(data,status=status.HTTP_200_OK)
     
-        
+

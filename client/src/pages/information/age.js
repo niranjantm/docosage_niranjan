@@ -2,10 +2,11 @@ import React from 'react'
 import { useState } from 'react'
 import classes from "@/styles/height-Weight-age.module.css"
 import { useRouter } from 'next/router'
-import axios from 'axios'
+import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 function weight() {
     const [age,setAge] = useState(30)
     const router = useRouter()
+    const axiosPrivate = useAxiosPrivate()
 
 
     const handleWeightDisplay = (e)=>{
@@ -14,7 +15,10 @@ function weight() {
 
    const handleSubmit= async(e)=>{
     try{
-        const response = await axios.patch('http://127.0.0.1:8000/')
+        const response = await axiosPrivate.post('updateuserinfo/',{"age":age})
+        if(response.status===200){
+            router.push('sleepingHours')
+        }
     }catch(error){
         console.log(error)
     }
@@ -28,7 +32,7 @@ return(
             <input className={classes.inputSlider} type="range" min={1} onChange={handleWeightDisplay} max={120} step={1} value={age} ></input>
         </div>
         <div className={classes.buttonContainer}>
-            <button type='button' className={classes.nextButton} onClick={()=>router.push('sleepingHours')}>Next</button>
+            <button type='button' className={classes.nextButton} onClick={handleSubmit}>Next</button>
             <button type='button' className={classes.skipButton}>Skip</button>
         </div>
     </main>

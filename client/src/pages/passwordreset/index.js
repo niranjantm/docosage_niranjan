@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from "../api/axios"
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { IoEyeOffOutline } from "react-icons/io5";
@@ -52,9 +52,12 @@ function index() {
                 setError("Invalid password")
             }
             else{
-                const res = await axios.patch("http://127.0.0.1:8000/passwordconfirm/",{"user":user,"newPassword":formData.newPassword})
-                setError("")    
-                setStatus("Password reset successfull")
+                const res = await axios.patch("passwordconfirm/",{"user":user,"newPassword":formData.newPassword})
+                if(res.status===200){
+                    setError("")    
+                    setStatus("Password reset successfull")
+                }
+               
             }
         }
         catch(error){

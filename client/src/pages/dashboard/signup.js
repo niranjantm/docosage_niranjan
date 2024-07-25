@@ -2,7 +2,7 @@ import React, { useState ,useContext} from 'react'
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import classes from "@/styles/signup.module.css"
-import axios from 'axios';
+import axios from "@/pages/api/axios"
 import { useRouter } from 'next/router';
 import AuthContext from '@/context/AuthContext';
 
@@ -46,7 +46,7 @@ function Signup() {
 
            
             try{
-                const res = await axios.post("http://127.0.0.1:8000/register/",{account_type:user,...formData})
+                const res = await axios.post("register/",{account_type:user,...formData})
                 console.log(res.data);
                 if(res.status===201){
 

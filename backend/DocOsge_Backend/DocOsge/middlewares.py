@@ -10,7 +10,7 @@ class CustomJWTAuthentication(JWTAuthentication):
             raise Exception("User id not found in token")
         try:
             user = Users.objects.get(user_id=user_id)
-            return user
+            return {"user_id":user.user_id,"email":user.email}
         except Users.DoesNotExist:
             raise Exception("User does not exist")
         

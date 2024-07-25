@@ -2,13 +2,26 @@ import React from 'react'
 import { useState } from 'react'
 import classes from "@/styles/sleepingHours.module.css"
 import { useRouter } from 'next/router'
+import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 function weight() {
     const [sleepTime,setSleepTime] = useState({getInBed:"10:00",wakeUp:"06:00"})
     const router = useRouter()
+    const axiosPrivate  = useAxiosPrivate()
 
 
     const handleTimeChange = (e)=>{
         setSleepTime({...sleepTime,[e.target.name]:e.target.value})
+   }
+
+   const handleNext = async()=>{
+    try{
+        const response = await axiosPrivate.post('updateuserinfo/',{"getInBed":sleepTime.getInBed,"wakeUp":sleepTime.wakeUp})
+        if(response.status===200){
+            router.push('steps')
+        }
+    }catch(error){
+        console.log(error)
+    }
    }
 
 return(
@@ -27,7 +40,7 @@ return(
             
         </div>
         <div className={classes.buttonContainer}>
-            <button type='button' className={classes.nextButton} onClick={()=>router.push('steps')}>Next</button>
+            <button type='button' className={classes.nextButton} onClick={handleNext}>Next</button>
             <button type='button' className={classes.skipButton}>Skip</button>
         </div>
     </main>

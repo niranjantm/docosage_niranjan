@@ -2,6 +2,7 @@ import { useState } from "react"
 import classes from '@/styles/height-Weight-age.module.css'
 import { useRouter } from "next/router"
 import useAxiosPrivate from "@/hooks/useAxiosPrivate"
+import protectedRoutes from "@/components/protectedRoute"
 
 function Height(){
     const [height,setHeight] = useState(60)
@@ -43,4 +44,4 @@ return(
 )
 }
 
-export default Height;
+export default protectedRoutes(Height);

@@ -4,6 +4,7 @@ import classes from "@/styles/steps-calories.module.css"
 import { RiRunLine } from "react-icons/ri";
 import { useRouter } from 'next/router';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
+import protectedRoutes from '@/components/protectedRoute';
 function Steps() {
     const [steps,setSteps] = useState(5000)
     const router = useRouter()
@@ -51,4 +52,4 @@ return(
 )
 }
 
-export default Steps
+export default protectedRoutes(Steps)

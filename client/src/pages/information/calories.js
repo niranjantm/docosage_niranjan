@@ -4,6 +4,7 @@ import classes from "@/styles/steps-calories.module.css"
 import { ImFire } from "react-icons/im";
 import { useRouter } from 'next/router';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
+import protectedRoutes from '@/components/protectedRoute';
 function Calories() {
     const [calories,setCalories] = useState(5000)
     const router = useRouter()
@@ -51,4 +52,4 @@ return(
 )
 }
 
-export default Calories
+export default protectedRoutes(Calories)

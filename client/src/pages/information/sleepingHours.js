@@ -3,7 +3,8 @@ import { useState } from 'react'
 import classes from "@/styles/sleepingHours.module.css"
 import { useRouter } from 'next/router'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
-function weight() {
+import protectedRoutes from '@/components/protectedRoute'
+function sleepingHours() {
     const [sleepTime,setSleepTime] = useState({getInBed:"10:00",wakeUp:"06:00"})
     const router = useRouter()
     const axiosPrivate  = useAxiosPrivate()
@@ -47,4 +48,4 @@ return(
 )
 }
 
-export default weight
+export default protectedRoutes(sleepingHours)

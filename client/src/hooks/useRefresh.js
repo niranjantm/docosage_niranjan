@@ -7,7 +7,7 @@ import useAuth from "./useAuth"
     const {userAuth,setUserAuth} = useAuth()
     const refresh = async ()=>{
         try{
-            const response = await axios.post("refresh/",{"refresh":userAuth?.refresh},{
+            const response = await axios.post("refresh/",{},{
                 withCredentials:true, headers:{"Content-Type":"application/json"}
             })
             if(response.status===200){

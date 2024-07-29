@@ -31,7 +31,13 @@ function Gender() {
                     router.push('height')
                 }
             }catch(error){
-                console.log(error)
+                console.log(error.response)
+                if(error.response?.status===401){
+                    setError(error.response?.data?.messages[0]?.message)
+                }
+                else{
+                    setError("Something went wrong!")
+                }
             }
         }
     }

@@ -1,7 +1,9 @@
+from typing import Any, Dict
 from django.contrib.auth.models import Group, User
 from .models import LoginUsers,Users,AccountTypes,UserAccountTypes,SocialAccounts,UserInformation
 from rest_framework import serializers
-
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.exceptions import InvalidToken
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -50,5 +52,17 @@ class UserInformationSerializer(serializers.ModelSerializer):
         fields = '__all__'
     
         
-
+class CookieTokenRefreshSerializer(TokenRefreshSerializer):
+    refresh = None
+    
+    def validate(self, attrs):
         
+        request = self.context['request']
+        refresh_token = request.COOKIES.get('refresh')
+        
+        if not refresh_token:
+            raise InvalidToken('No valid token found in cookie "refresh"')
+        
+        attrs['refresh'] = refresh_token
+        return super().validate(attrs)
+    

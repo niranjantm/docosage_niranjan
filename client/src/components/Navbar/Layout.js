@@ -4,7 +4,7 @@ import Navbar from './Navbar'
 function Layout({children}) {
   return (
     <div>
-        <Navbar>
+        <Navbar suppressHydrationWarning>
         </Navbar>
         <main>{children}</main>
     </div>

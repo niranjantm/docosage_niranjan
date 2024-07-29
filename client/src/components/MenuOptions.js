@@ -4,6 +4,7 @@ import { FaAngleRight } from "react-icons/fa6";
 import { IoMdClose } from "react-icons/io";
 import useAuth from '@/hooks/useAuth';
 import { useRouter } from 'next/router';
+import {axiosPrivate} from '@/pages/api/axios';
 
 
 function MenuOptions({showOptions,setShowOptions}) {
@@ -23,10 +24,20 @@ function MenuOptions({showOptions,setShowOptions}) {
         }
     },[showOptions])
 
-    const handleOptionClick=(e)=>{
+    const handleOptionClick= async(e)=>{
         e.preventDefault()
         if(e.target.name ==="Logout"){
-            setUserAuth(null)
+            
+            try{
+                const response = await axiosPrivate.post("logout/")
+                if(response.status===200){
+                    setUserAuth(null)
+                }
+            }
+            catch(error){
+                console.error(error)
+            }
+
         }else{
             router.push('/dashboard/login')
         }

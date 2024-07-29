@@ -3,16 +3,21 @@ from .models import LoginUsers,UserAccountTypes,Users,UserInformation
 from rest_framework import permissions, viewsets
 from rest_framework import status
 from rest_framework.response import Response
-from django.http import HttpResponse
+from rest_framework.request import Request
+from django.http import HttpRequest
+import json
 from django.contrib.auth.hashers import check_password,make_password
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from django.conf import settings
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.test import APIRequestFactory
+from rest_framework_simplejwt.exceptions import InvalidToken
 # from rest_framework_simplejwt.authentication import JWTAuthentication
 from .middlewares import CustomJWTAuthentication
 from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework.decorators import action
-from DocOsge_Backend.DocOsge.serializers import GroupSerializer, UserSerializer, LoginUserSerializer,UsersSerializer,AccountTypesSerializer,LoginUserSerializer,PasswordResetSerializer,UserInformationSerializer
+from DocOsge_Backend.DocOsge.serializers import GroupSerializer, UserSerializer, LoginUserSerializer,UsersSerializer,AccountTypesSerializer,LoginUserSerializer,PasswordResetSerializer,UserInformationSerializer,CookieTokenRefreshSerializer
+
+
+
 
 class UserViewSet(viewsets.ModelViewSet):
     
@@ -122,16 +127,16 @@ class LoginUserViewSet(viewsets.ViewSet):
                         
                         response = Response(user_dict,status=status.HTTP_200_OK)
                        
-                        # response.set_cookie(
-                        #     key='refresh',
-                        #     value=str(refresh),
-                        #     httponly=True,
-                        #     secure=False,
-                        #     samesite=None,
-                        #     domain='127.0.0.1',
-                        #     path='/',
-                        #     expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
-                        # )
+                        response.set_cookie(
+                            key='refresh',
+                            value=str(refresh),
+                            httponly=True,
+                            secure=False,
+                            samesite=None,
+                            domain='127.0.0.1',
+                            path='/',
+                            expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
+                        )
                         return response
                     else:
                         return Response("invalid credentials",status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -242,25 +247,30 @@ class UserInfoUpdateViewSet(viewsets.ViewSet):
 # -----------------------------------Token-refresh-view---------------------------------------------------------- 
 
 class CustomTokenRefreshView(TokenRefreshView):
+    
+    serializer_class = CookieTokenRefreshSerializer
         
     def post(self,request,*args, **kwargs):
         
-        # print(request.COOKIES.get('refresh'))
+        serializer = self.get_serializer(data=request.data,context={'request':request})
         
-        # refresh_token = request.COOKIES.get('refresh_token')
+        try:
+            serializer.is_valid(raise_exception=True)
+        except InvalidToken as e:
+            return Response({"detail":str(e)},status=status.HTTP_401_UNAUTHORIZED)
         
-        # if refresh_token is None:
-        #     return Response({"error": "No refresh token found in cookies"}, status=status.HTTP_400_BAD_REQUEST)
-        # cookie = request.COOKIES.get('refresh_token')
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+       
+    
+class LogoutUserView(viewsets.ViewSet):
+    
+    def create(self,request):
         
-        response = super().post(request, *args, **kwargs)
+        response = Response({"message":"User logout successfull"}, status=status.HTTP_200_OK)
+        response.delete_cookie(
+            key="refresh",
+        )
+        return response
         
-        
-        data = response.data
-        
-        # refresh_token = data.get("refresh")
-        
-        
-        return Response(data,status=status.HTTP_200_OK)
     
 

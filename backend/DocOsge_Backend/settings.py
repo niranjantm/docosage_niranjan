@@ -102,7 +102,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "DocOsge_Backend.wsgi.application"
 
-FRONTEND_URL = 'http://localhost:3000'
+FRONTEND_URL = 'http://127.0.0.1:3000'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -143,7 +143,7 @@ SIMPLE_JWT = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        'NAME': 'docosage',
+        'NAME': 'docosge',
         'USER': 'root',
         'PASSWORD': 'niranjan',
         'HOST':'localhost',

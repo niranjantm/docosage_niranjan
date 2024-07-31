@@ -31,6 +31,7 @@ router.register(r'register',views.RegisterUserViewSet, basename='register')
 router.register(r'passwordreset',views.PasswordResetRequestViewSet, basename='passwordreset')  
 router.register(r'updateuserinfo',views.UserInfoUpdateViewSet, basename='updateuserinfo')
 router.register(r'logout',views.LogoutUserView,basename='logoutuser')
+router.register(r'doctorinfo',views.DoctorInfoView,basename="doctorinfo")
 # router.register(r'passwordconfirm',views.PasswordResetConfirmViewSet, basename='passwordconfirm')  
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

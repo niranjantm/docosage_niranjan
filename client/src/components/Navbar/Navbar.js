@@ -26,8 +26,8 @@ export default function Navbar() {
         {!userAuth && <li>
           <Link href={"/dashboard/login"} className={classes.login}>Login</Link>
         </li>}
-        {userAuth && <li>
-          <Link href={!userAuth ? "/dashboard/login" : "#"} className={classes.login}>{userAuth?.name ? "Account" : "Login"}</Link>
+        {userAuth?.account_type && <li>
+          {<Link href={!userAuth?.account_type==='customer'?"/information/gender": "/doctorInformation"} className={classes.login}>{userAuth?.name ? "Account" : "Login"}</Link>}
         </li>}
       </ul>
 

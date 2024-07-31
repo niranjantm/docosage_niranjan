@@ -1,20 +1,18 @@
 from django.contrib.auth.models import Group, User
-from .models import LoginUsers,UserAccountTypes,Users,UserInformation
+from .models import LoginUsers,UserAccountTypes,Users,UserInformation,AccountTypes
 from rest_framework import permissions, viewsets
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.request import Request
-from django.http import HttpRequest
-import json
 from django.contrib.auth.hashers import check_password,make_password
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from django.conf import settings
-from rest_framework.test import APIRequestFactory
+from datetime import timedelta
 from rest_framework_simplejwt.exceptions import InvalidToken
 # from rest_framework_simplejwt.authentication import JWTAuthentication
 from .middlewares import CustomJWTAuthentication
+from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.views import TokenRefreshView
-from DocOsge_Backend.DocOsge.serializers import GroupSerializer, UserSerializer, LoginUserSerializer,UsersSerializer,AccountTypesSerializer,LoginUserSerializer,PasswordResetSerializer,UserInformationSerializer,CookieTokenRefreshSerializer
+from DocOsge_Backend.DocOsge.serializers import GroupSerializer, UserSerializer,LoginUserSerializer,UsersSerializer,AccountTypesSerializer,LoginUserSerializer,PasswordResetSerializer,UserInformationSerializer,CookieTokenRefreshSerializer,DoctorInformationSerializer
 
 
 
@@ -87,7 +85,9 @@ class RegisterUserViewSet(viewsets.ViewSet):
                 value=str(refresh),
                 httponly=True,
                 secure=False,
-                samesite='Lax',
+                samesite="Lax",
+                domain='127.0.0.1',
+                path='/',
                 expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
             )
             return response
@@ -116,6 +116,12 @@ class LoginUserViewSet(viewsets.ViewSet):
                     user = Users.objects.get(email=email)
                     user_dict = Users.objects.filter(email=email).values().first()
                     
+                    accountType = AccountTypes.objects.filter(account_type_id =user_dict['user_id']).values().first()
+                    
+                    if(accountType.get('account_type') is None):
+                        return Response({"message":"User not found"},status=status.HTTP_404_NOT_FOUND)
+                    user_dict['account_type'] = accountType.get('account_type')
+                    
                     
                     if(check_password(password,user_dict.get("password_hash"))):
                         
@@ -123,7 +129,6 @@ class LoginUserViewSet(viewsets.ViewSet):
                         
                         refresh = RefreshToken.for_user(user)
                         user_dict['access'] = str(refresh.access_token)
-                        user_dict['refresh'] = str(refresh)
                         
                         response = Response(user_dict,status=status.HTTP_200_OK)
                        
@@ -132,9 +137,9 @@ class LoginUserViewSet(viewsets.ViewSet):
                             value=str(refresh),
                             httponly=True,
                             secure=False,
-                            samesite=None,
-                            domain='127.0.0.1',
-                            path='/',
+                            samesite="Lax",
+                            # domain='127.0.0.1',
+                            # path='/',
                             expires=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
                         )
                         return response
@@ -142,12 +147,12 @@ class LoginUserViewSet(viewsets.ViewSet):
                         return Response("invalid credentials",status=status.HTTP_406_NOT_ACCEPTABLE)
                 
                 except Exception as error:
-                    return Response("invalid credentials",status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
                     
 
             return Response (userSerializer.errors,status=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
-            return Response({"error":str(error)},status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
         
         
     #---------------------------------EMAIL VERIFICATION AND TOKEN GENERATION API FOR PASSWORD RESET-----------------------------------    
@@ -166,7 +171,9 @@ class PasswordResetRequestViewSet(viewsets.ViewSet):
                     
                     refresh = RefreshToken.for_user(user)
                     token = refresh.access_token
+                    token.set_exp(lifetime=timedelta(minutes=5))
                     token["email"] = user.email
+                    
                     
                     return Response({"url":f'{settings.FRONTEND_URL}/passwordreset/?email={user.email}&user={token}'},status=status.HTTP_200_OK)
                     
@@ -273,4 +280,43 @@ class LogoutUserView(viewsets.ViewSet):
         return response
         
     
+class DoctorInfoView(viewsets.ViewSet):
+    authentication_classes=[CustomJWTAuthentication]
+    
+    def create(self,request):
+        
+        print(request.user)
+        
 
+        if isinstance(request.user,AnonymousUser):
+            return Response({"message":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
+        
+        
+        
+       
+        doctorInfo = request.data
+        doctorInfo['user'] = request.user.get("user_id")
+        
+        
+        try:
+            validDoctor = AccountTypes.objects.filter(account_type_id=doctorInfo.get('user')).values().first()
+            
+            if(validDoctor["account_type"] !='doctor'):
+                return Response({"message":"User is not a doctor"},status=status.HTTP_400_BAD_REQUEST)
+            
+            doctorInfoSerializer = DoctorInformationSerializer(data=doctorInfo)
+            
+            
+           
+            if(doctorInfoSerializer.is_valid()):
+                doctorInfoSerializer.save()
+                return Response({'message':"doctor info created"},status=status.HTTP_201_CREATED)
+            else:
+                raise Exception (doctorInfoSerializer.errors)
+        except Exception as error:
+            return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
+            
+            
+        
+        
+        

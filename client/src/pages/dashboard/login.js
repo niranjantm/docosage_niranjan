@@ -43,6 +43,7 @@ function Login() {
             withCredentials:true})
                 console.log(res.data);
                 if(res?.status===200){
+                    console.log(res.data)
                     setUserAuth(res.data)
                     router.push("/")
                 }
@@ -133,7 +134,7 @@ function Login() {
 
             <div className={classes.signinContainer}>
                 <p>Don't have an account?</p>
-                <button type='button' onClick={()=>router.push('signup')}>Sign up</button>
+                <button type='button' onClick={()=>router.push('TC')}>Sign up</button>
             </div>
 
         </main>

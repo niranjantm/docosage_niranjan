@@ -2,7 +2,7 @@ import React, { useState ,useContext} from 'react'
 import { IoEyeOffOutline } from "react-icons/io5";
 import { IoEyeOutline } from "react-icons/io5";
 import classes from "@/styles/signup.module.css"
-import axios from "@/pages/api/axios"
+import {axiosPrivate} from "@/pages/api/axios"
 import { useRouter } from 'next/router';
 import AuthContext from '@/context/AuthContext';
 
@@ -22,7 +22,12 @@ function Signup() {
 
     const handleChange = (e) => {
         setError("")
-        setformData({ ...formData, [e.target.name]: e.target.value });
+        if(e.target.name==="phone_number" && e.target.value.length>10){
+            setError("Enter a valid phone number")
+        }else{
+            setformData({ ...formData, [e.target.name]: e.target.value });
+        }
+        
     }
 
     const handleTermsAndContions = (e)=>{
@@ -46,11 +51,12 @@ function Signup() {
 
            
             try{
-                const res = await axios.post("register/",{account_type:user,...formData})
+                const res = await axiosPrivate.post("register/",{account_type:user,...formData})
                 console.log(res.data);
                 if(res.status===201){
 
                     setUserAuth(res.data)
+                    console.log(res.data)
                     router.push('congratulations')
                 }
             }catch(error){

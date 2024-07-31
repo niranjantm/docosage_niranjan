@@ -1,6 +1,6 @@
-from typing import Any, Dict
+
 from django.contrib.auth.models import Group, User
-from .models import LoginUsers,Users,AccountTypes,UserAccountTypes,SocialAccounts,UserInformation
+from .models import Users,AccountTypes,UserInformation,DoctorInformation
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken
@@ -65,4 +65,9 @@ class CookieTokenRefreshSerializer(TokenRefreshSerializer):
         
         attrs['refresh'] = refresh_token
         return super().validate(attrs)
+    
+class DoctorInformationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoctorInformation
+        fields = '__all__'
     

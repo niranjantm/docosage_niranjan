@@ -6,6 +6,7 @@ from .models import Users
 class CustomJWTAuthentication(JWTAuthentication):
     def get_user(self, validated_token):
         user_id = validated_token.get('user_id')
+        
         if(user_id is None):
             raise Exception("User id not found in token")
         try:

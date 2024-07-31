@@ -64,7 +64,7 @@ class SocialAccounts(models.Model):
     
     social_id = models.AutoField(primary_key=True)
     
-    user_id = models.ForeignKey(Users('user_id'),on_delete=models.CASCADE)
+    user_id = models.ForeignKey(Users,on_delete=models.CASCADE)
     
     provider = models.CharField(max_length=50,null=False, blank=False)
     
@@ -75,7 +75,7 @@ class SocialAccounts(models.Model):
     #     db_table = 'social_accounts'
     #     app_label = 'DocOsge_Backend.DocOsge'
 class UserInformation(models.Model):
-    user = models.ForeignKey(Users('user_id'),on_delete=models.CASCADE)
+    user = models.ForeignKey(Users("user_id"),on_delete=models.CASCADE)
     height = models.IntegerField(null=True,blank=True)
     weight = models.IntegerField(null=True,blank=True)
     age = models.IntegerField(null=True,blank=True)
@@ -84,6 +84,24 @@ class UserInformation(models.Model):
     calories = models.IntegerField(null=True,blank=True)
     steps =models.IntegerField(null=True,blank=True)
     gender = models.CharField(max_length=10,null=True,blank=True)
+    
+    
+class DoctorInformation(models.Model):
+    user = models.OneToOneField(Users,on_delete=models.CASCADE)
+    age = models.DateField(null=False)
+    gender = models.CharField(max_length=10,null=False)
+    qualification = models.CharField(max_length=255,null=False)
+    yearsOfExperience=models.IntegerField(null=False)
+    registrationYear=models.DateField(null=False)
+    registrationNumber = models.CharField(max_length=255,null=False)
+    registeredCouncil = models.CharField(max_length=255,null=False)
+    practiceType=models.CharField(max_length=255,null=False)
+    clinicAddress=models.CharField(max_length=255,null=False)
+    clinicZipCode=models.IntegerField(null=False,blank=False)
+    
+    
+    def __str__(self):
+        return self.user
     
     
     

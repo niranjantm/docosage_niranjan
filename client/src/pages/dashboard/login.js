@@ -14,13 +14,21 @@ function Login() {
     const [disable,setDisable] = useState(false)
     const [error,setError] = useState("");
     const router = useRouter();
-    const {userAuth,setUserAuth} = useAuth()
-
+    const [rememberMe,setRememberMe] = useState(false);
+    const {userAuth,setUserAuth} = useAuth();
 
     const handleUserType=(e)=>{
         setUser(e.target.name);
         
     }
+
+    useEffect(()=>{
+        
+        if(localStorage.getItem("user")){
+            
+            router.back()
+        }
+    },[])
     
     
 
@@ -43,8 +51,12 @@ function Login() {
             withCredentials:true})
                 console.log(res.data);
                 if(res?.status===200){
-                    console.log(res.data)
+                    if(rememberMe){
+                        localStorage.setItem("user",JSON.stringify(res.data))
+                    }
+                    
                     setUserAuth(res.data)
+                
                     router.push("/")
                 }
 
@@ -59,6 +71,10 @@ function Login() {
 
         }
         
+    }
+
+    const handleRememberMe=(e)=>{
+        setRememberMe(e.target.checked)
     }
 
     return (
@@ -107,7 +123,7 @@ function Login() {
 
                 <div className={classes.rememberMeAndForgotPassword}>
                     <div>
-                        <input type='checkbox'></input>
+                        <input type='checkbox' onChange={handleRememberMe}></input>
                         <p>Remember me</p>
                     </div>
                     <div>

@@ -4,6 +4,7 @@
     align-items: center;
     padding: 2% 10% 10% 10%;
     gap: 20px;
+    height: 100%;
     
 }
 
@@ -16,6 +17,10 @@
 .formSection div{
     display:flex;
     flex-direction: column;
+}
+.formSection div label{
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 .formSection input {
     height: 40px;
@@ -31,7 +36,12 @@
     border: 2px solid rgb(211, 208, 208)
 }
 .formSection textarea{
-    height: 40px;
+    height: 100px;
+    min-width: 200px;
+    min-height: 80px;
+    max-height: 150px;
+    width: 300px;
+    max-width:350px ;
     padding: 0 3px;
     border-radius: 5px;
     border: 2px solid rgb(211, 208, 208)
@@ -40,6 +50,9 @@
 @media screen and (max-width:600px) {
     .formSection{
         grid-template-columns: repeat(1 , 1fr);
+    }
+    .main{
+        height: 100%;
     }
 }
 

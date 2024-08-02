@@ -3,7 +3,7 @@ import { IoIosMale,IoIosFemale } from "react-icons/io";
 import classes from "@/styles/gender.module.css"
 import { useRouter } from 'next/router';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
-import protectedRoutes from '@/components/protectedRoute';
+import protectedRoutesCustomer from '@/components/protectedRoute';
 
 
 function Gender() {
@@ -72,4 +72,4 @@ function Gender() {
     )
 }
 
-export default protectedRoutes(Gender)
+export default protectedRoutesCustomer(Gender)

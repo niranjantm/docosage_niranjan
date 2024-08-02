@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group, User
-from .models import LoginUsers,UserAccountTypes,Users,UserInformation,AccountTypes
+from .models import LoginUsers,UserAccountTypes,Users,UserInformation,AccountTypes,DoctorInformation
 from rest_framework import permissions, viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -223,8 +223,8 @@ class UserInfoUpdateViewSet(viewsets.ViewSet):
     
     def create(self,request):
         
-        if request.user is None:
-            return Response({"error":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
+        if isinstance(request.user,AnonymousUser):
+            return Response({"message":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
         
         verifiedUser = request.user
         request.data["user"] = verifiedUser["user_id"]
@@ -240,15 +240,16 @@ class UserInfoUpdateViewSet(viewsets.ViewSet):
                 for key, value in request.data.items():
                     setattr(user,key,value)
                 user.save()
-                return Response("user info updated",status=status.HTTP_200_OK)
+                return Response({"message":"user info updated"},status=status.HTTP_200_OK)
             
-        except:
+        except UserInformation.DoesNotExist:
             if(userInfoSerializer.is_valid()):
                 userInfoSerializer.save()
                 return Response("user info created",status=status.HTTP_200_OK)
             else:
                 return Response(userInfoSerializer.errors,status=status.HTTP_400_BAD_REQUEST)
-       
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
 # -----------------------------------Token-refresh-view---------------------------------------------------------- 
@@ -316,7 +317,31 @@ class DoctorInfoView(viewsets.ViewSet):
         except Exception as error:
             return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
             
+    def list(self,request):
+        
+        if isinstance(request.user,AnonymousUser):
+            return Response({"message":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
+        
+        try:
+            validDoctor = AccountTypes.objects.filter(account_type_id=request.user.get("user_id")).values().first()
+            if(validDoctor["account_type"] !='doctor'):
+                return Response({"message":"User is not a doctor"},status=status.HTTP_400_BAD_REQUEST)
             
+            doctorData = DoctorInformation.objects.get(user_id=request.user.get("user_id"))
+            serializer = DoctorInformationSerializer(doctorData)
+          
+            data = serializer.data
+            data.pop("id")
+            data.pop("user")
+            
+            return Response(data,status=status.HTTP_200_OK)
+        except DoctorInformation.DoesNotExist:
+            return Response({"message":"user not found"},status=status.HTTP_404_NOT_FOUND)
+        except Exception as error:
+            return Response(str(error),status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+        
+        # return Response({"message":"ok"},status=status.HTTP_200_OK) 
         
         
         

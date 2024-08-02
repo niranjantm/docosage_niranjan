@@ -1,7 +1,7 @@
 .main{
    width: 100%;
    position: absolute;
-   height: 100%;
+   height:100%;
     background: rgba(0, 0, 0, 0.2);
 }
 
@@ -18,6 +18,17 @@
     left: -300px;
     
     
+}
+
+@media screen and (max-width:600px){
+    .main{
+        height: 160vh;
+    }
+}
+@media screen and (max-height:700px) {
+    .main{
+        height: 190vh;
+    }
 }
 
 .options{

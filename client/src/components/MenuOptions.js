@@ -31,6 +31,7 @@ function MenuOptions({showOptions,setShowOptions}) {
             try{
                 const response = await axiosPrivate.post("logout/")
                 if(response.status===200){
+                    localStorage.removeItem("user")
                     setUserAuth(null)
                 }
             }

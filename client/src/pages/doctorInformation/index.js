@@ -1,16 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import classes from "@/styles/doctorInformation.module.css"
-
+import Layout from '@/components/Navbar/Layout'
+import practiceData from '@/context/doctorPracticeData'
+import protectedRoutesDoctor from '@/components/doctorProtectedRoutes'
 
 function DoctorInformation() {
 
-    const practiceData = ["General Practitioner (GP)", "Family Medicine", "Internal Medicine", "Pediatrics", "Obstetrics and Gynecology (OB/GYN)", "Cardiology", "Dermatology",
-        "Neurology", "Orthopedics", "Psychiatry", "Surgery", "Radiology", "Anesthesiology", "Oncology", "Endocrinology", "Gastroenterology", "Nephrology", "Pulmonology", "Rheumatology", "Emergency Medicine"]
+    
    
         const [formData,setFormData] = useState({age:"",gender:"female",qualification:"MBBS",yearsOfExperience:"",registrationYear:"",registrationNumber:"",registeredCouncil:"Medical Council of India",practiceType:"Family Medicine",clinicAddress:"",clinicZipCode:""})
 
         const [error,setError] = useState("")
+
+        const [oldDoctorInfo,setOldDoctorInfo] = useState("")
 
         const axiosPrivate = useAxiosPrivate()
 
@@ -52,6 +55,25 @@ function DoctorInformation() {
         }
 
         console.log(formData)
+
+        useEffect(()=>{
+            
+                const getDoctorData = async()=>{
+                    try{
+                    const res = await axiosPrivate.get("doctorinfo/")
+                    if(res.status===200){
+                        console.log(res.data)
+                        setOldDoctorInfo(res.data)
+                        setFormData(res.data)
+                    }
+                }
+                catch(error){
+                    console.log(error)
+                }
+                
+           
+        }
+        getDoctorData()},[])
     
         return (
         <main className={classes.main}>
@@ -64,15 +86,15 @@ function DoctorInformation() {
                     <section className={classes.formSection}>
                     <div>
                         <label htmlFor='age'>
-                            Select your date of birth
+                            Select your date of birth:
                         </label>
                         <input type='date' id='age' value={formData.age} onChange={handleChange}></input>
                     </div>
                     <div>
                         <label htmlFor='gender'>
-                            Select your gender
+                            Select your gender:
                         </label>
-                        <select defaultValue={"female"} id='gender' onChange={handleChange}>
+                        <select defaultValue={formData.gender} id='gender' onChange={handleChange}>
                             <option value={"male"}>Male</option>
                             <option value={"female"}>Female</option>
                             <option value={"others"}>Others</option>
@@ -80,9 +102,9 @@ function DoctorInformation() {
                     </div>
                     <div>
                         <label htmlFor='qualification' >
-                            Select your qualification
+                            Select your qualification:
                         </label>
-                        <select defaultValue={"MBBS"} id='qualification' onChange={handleChange}>
+                        <select defaultValue={formData.qualification} id='qualification' onChange={handleChange}>
                             <option value={"MBBS"}>MBBS</option>
                             <option value={"MD"}>MD</option>
                         </select>
@@ -90,30 +112,30 @@ function DoctorInformation() {
 
                     <div>
                         <label htmlFor='yearsOfExperience'>
-                            Enter your years of experience
+                            Enter your years of experience:
                         </label>
                         <input type='number' value={formData.yearsOfExperience} onChange={handleChange} id='yearsOfExperience' />
                     </div>
 
                     <div>
                         <label htmlFor='registrationYear'>
-                            Enter your year of registration
+                            Enter your year of registration:
                         </label>
                         <input type='date' value={formData.registrationYear} id='registrationYear'onChange={handleChange} />
                     </div>
 
                     <div>
                         <label htmlFor='registrationNumber'>
-                            Enter your registration number
+                            Enter your registration number:
                         </label>
                         <input type='text' value={formData.registrationNumber} id='registrationNumber' onChange={handleChange} />
                     </div>
 
                     <div>
                         <label htmlFor='registeredCouncil'>
-                            Select your Registered council
+                            Select your Registered council:
                         </label>
-                        <select id='registeredCouncil' defaultValue={"Medical Council of India"} onChange={handleChange}>
+                        <select id='registeredCouncil' defaultValue={formData.registeredCouncil} onChange={handleChange}>
                             <option value={"Medical Council of India"}>Medical Council of India</option>
                             <option value={"State Medical Council"}>State Medical Council</option>
                         </select>
@@ -121,9 +143,9 @@ function DoctorInformation() {
 
                     <div>
                         <label htmlFor='practiceType'>
-                            Select your practice type
+                            Select your practice type:
                         </label>
-                        <select type='date' id='practiceType' defaultValue={practiceData[1]} onChange={handleChange}>
+                        <select type='date' id='practiceType' defaultValue={formData.practiceType} onChange={handleChange}>
                             {practiceData.map((item,index)=>{
                                 return(
                                     <option key={item}>{item}</option>
@@ -133,19 +155,19 @@ function DoctorInformation() {
                     </div>
 
                     <div>
-                        <label htmlFor='clinicAddress' >Enter your clinic's address</label>
+                        <label htmlFor='clinicAddress' >Enter your clinic's address:</label>
                         
-                        <textarea id='clinicAddress' value={formData.clinicAddress} onChange={handleChange}></textarea>
+                        <textarea  id='clinicAddress' value={formData.clinicAddress} onChange={handleChange}></textarea>
                         </div>
                         <div>
-                        <label htmlFor='clinicZipCode'>Enter zip code</label>
+                        <label htmlFor='clinicZipCode'>Enter zip code:</label>
                         <input type='number' id='clinicZipCode' value={formData.clinicZipCode} onChange={handleChange}></input>
                         
                     </div>
                    
                 </section> 
                 <div className={classes.buttonDiv}>
-                <button  className={classes.button} type='submit'>Submit</button>
+                <button  className={classes.button} type='submit'>{oldDoctorInfo?"Update":"Submit"}</button>
                 </div>    
                 </form>
                
@@ -155,4 +177,7 @@ function DoctorInformation() {
     )
 }
 
-export default DoctorInformation
+DoctorInformation.NavLayout = Layout
+
+export default protectedRoutesDoctor(DoctorInformation);
+// export default DoctorInformation

@@ -339,9 +339,32 @@ class DoctorInfoView(viewsets.ViewSet):
             return Response({"message":"user not found"},status=status.HTTP_404_NOT_FOUND)
         except Exception as error:
             return Response(str(error),status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def update(self,request,pk):
+        pk = None
+        
+        if isinstance(request.user,AnonymousUser):
+            return Response({"message":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
+        
+        try:
+            validDoctor = AccountTypes.objects.filter(account_type_id=request.user.get("user_id")).values().first()
+            if(validDoctor["account_type"] !='doctor'):
+                return Response({"message":"User is not a doctor"},status=status.HTTP_400_BAD_REQUEST)
             
-        
-        # return Response({"message":"ok"},status=status.HTTP_200_OK) 
-        
+            doctorData = DoctorInformation.objects.get(user_id = request.user.get("user_id"))
+            serializer = DoctorInformationSerializer(doctorData,data=request.data,partial=True)
+            
+            if(serializer.is_valid()):
+                serializer.save()
+                
+                data = serializer.data
+                data.pop("id")
+                data.pop("user")
+                return Response(data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except DoctorInformation.DoesNotExist:
+            return Response({"error": "Doctor not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            
         
         

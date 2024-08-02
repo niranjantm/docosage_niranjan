@@ -28,7 +28,13 @@ const protectedRoutesDoctor=(ProtectedPage)=>{
         return <div>Loading...</div>
       }
 
-    return userAuth?<ProtectedPage {...props}/>:null;
+    const Page =  userAuth?<ProtectedPage {...props}/>:null;
+
+    if(ProtectedPage.NavLayout){
+        return <ProtectedPage.NavLayout>{Page}</ProtectedPage.NavLayout>
+    }
+
+    return Page;
 
    } 
 }

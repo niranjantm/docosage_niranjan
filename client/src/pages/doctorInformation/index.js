@@ -13,7 +13,7 @@ function DoctorInformation() {
 
         const [error,setError] = useState("")
 
-        const [oldDoctorInfo,setOldDoctorInfo] = useState("")
+        const [oldDoctorInfo,setOldDoctorInfo] = useState(false)
 
         const axiosPrivate = useAxiosPrivate()
 
@@ -36,6 +36,7 @@ function DoctorInformation() {
 
         const handleSubmit=async(e)=>{
             e.preventDefault()
+           
             if(!formData.age || !formData.yearsOfExperience || !formData.registrationYear || !formData.registrationNumber || !formData.clinicAddress || !formData.clinicZipCode){
                 setError("Please fill out all fields.")
             }
@@ -43,14 +44,27 @@ function DoctorInformation() {
                 return
             }
             else{
-                try{
-                    const res = await axiosPrivate.post("doctorinfo/",formData)
-                    if(res.status === 200){
-                        console.log(res.data)
+                if(e.target.name === "save"){
+                    try{
+                        const res = await axiosPrivate.post("doctorinfo/",formData)
+                        if(res.status === 200){
+                            console.log(res.data)
+                        }
+                    }catch(error){
+                        console.log(error)
                     }
-                }catch(error){
-                    console.log(error)
                 }
+                if(e.target.name === "update"){
+                    try{
+                        const res = await axiosPrivate.put("doctorinfo/pk/",formData)
+                        if(res.status === 200){
+                            console.log(res.data)
+                        }
+                    }catch(error){
+                        console.log(error)
+                    }
+                }
+                
             }
         }
 
@@ -63,11 +77,12 @@ function DoctorInformation() {
                     const res = await axiosPrivate.get("doctorinfo/")
                     if(res.status===200){
                         console.log(res.data)
-                        setOldDoctorInfo(res.data)
+                        setOldDoctorInfo(true)
                         setFormData(res.data)
                     }
                 }
                 catch(error){
+                    setOldDoctorInfo(false)
                     console.log(error)
                 }
                 
@@ -82,7 +97,7 @@ function DoctorInformation() {
                 {error && <p style={{color:"red"}}>{error}</p>}
             </section>
             <section >
-                <form onSubmit={handleSubmit} >
+                <form onSubmit={handleSubmit} name={oldDoctorInfo?"update":"save"} >
                     <section className={classes.formSection}>
                     <div>
                         <label htmlFor='age'>
@@ -167,7 +182,7 @@ function DoctorInformation() {
                    
                 </section> 
                 <div className={classes.buttonDiv}>
-                <button  className={classes.button} type='submit'>{oldDoctorInfo?"Update":"Submit"}</button>
+                <button  className={classes.button} type='submit' >{oldDoctorInfo?"Update":"Submit"}</button>
                 </div>    
                 </form>
                

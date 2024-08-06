@@ -4,6 +4,7 @@ import classes from "@/styles/doctorInformation.module.css"
 import Layout from '@/components/Navbar/Layout'
 import practiceData from '@/context/doctorPracticeData'
 import protectedRoutesDoctor from '@/components/doctorProtectedRoutes'
+import { useRouter } from 'next/router'
 
 function DoctorInformation() {
 
@@ -16,6 +17,10 @@ function DoctorInformation() {
         const [oldDoctorInfo,setOldDoctorInfo] = useState(false)
 
         const axiosPrivate = useAxiosPrivate()
+
+        const router = useRouter()
+
+
 
         const handleChange=(e)=>{
             setError("")
@@ -49,6 +54,7 @@ function DoctorInformation() {
                         const res = await axiosPrivate.post("doctorinfo/",formData)
                         if(res.status === 200){
                             console.log(res.data)
+                           
                         }
                     }catch(error){
                         console.log(error)

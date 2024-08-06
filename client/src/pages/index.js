@@ -20,7 +20,7 @@ console.log(userAuth)
   
   return (
    <div>
-    <Link href={"/information/gender"}>update Info</Link>
+    {userAuth?.account_type==="doctor" && <Link href={"doctor/manageAvailability"}>manage availability</Link>}
 
    </div>
   )

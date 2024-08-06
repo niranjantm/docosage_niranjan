@@ -1,0 +1,44 @@
+.main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2% 10% 10% 10%;
+    gap: 20px;
+    height: 100%;
+    overflow: hidden;
+    
+    
+}
+.startAndEndTimeMain{
+    width: 100%;
+    
+}
+
+.startAndEndTimeContainer{
+    display: flex;
+    /* overflow: hidden; */
+    width: 100%;
+    overflow-x: scroll;
+
+}
+.singleStartAndEndTime{
+    border-radius: 10px;
+    background-color: rgb(222, 222, 222);
+    border: none;
+    padding: 15px 15px 5px 5px;
+    margin:10px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    
+}
+.singleStartAndEndTime__closeButton{
+    border: none;
+    background-color: transparent;
+    position: absolute;
+    display: flex;
+    justify-content: end;
+    top: 0;
+    right: 0;
+
+}

@@ -1,6 +1,6 @@
 
 from django.contrib.auth.models import Group, User
-from .models import Users,AccountTypes,UserInformation,DoctorInformation
+from .models import Users,AccountTypes,UserInformation,DoctorInformation,DoctorAvailability
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken
@@ -70,4 +70,21 @@ class DoctorInformationSerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorInformation
         fields = '__all__'
+        
+class DoctorAvailabilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoctorAvailability
+        fields = '__all__'
+        
+class DoctorSerializer(serializers.ModelSerializer):
+    doctor_name = serializers.CharField(source="user.name",read_only=True)
+    class Meta:
+        model = DoctorInformation
+        fields = [
+            "yearsOfExperience",
+            "practiceType",
+            "user",
+            "doctor_name"
+        ]
+    
     

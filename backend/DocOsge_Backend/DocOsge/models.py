@@ -103,5 +103,9 @@ class DoctorInformation(models.Model):
     def __str__(self):
         return self.user
     
+class DoctorAvailability(models.Model):
+    doctor =  models.OneToOneField(Users,on_delete=models.CASCADE)
+    availability = models.JSONField()
+    
     
     

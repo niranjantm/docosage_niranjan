@@ -6,12 +6,44 @@
     gap: 20px;
     height: 100%;
     overflow: hidden;
+    position: relative;
     
     
 }
+.dateAndHeadingDiv{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    /* position: fixed; */
+    /* background-color: #cfe0ff; */
+}
+.dateInput{
+    border-radius: 10px;
+    width: 150px;
+    padding: 10px;
+    border: 1px solid gray;
+}
+.h1Heading{
+    text-align: center;
+}
 .startAndEndTimeMain{
     width: 100%;
+    position: relative;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     
+}
+.startAndEndTimeMain__closeButton{
+    border: none;
+    background-color: transparent;
+    position: absolute;
+    display: flex;
+    justify-content: flex-end;
+    top: 0;
+    right: 100px;
 }
 
 .startAndEndTimeContainer{
@@ -22,13 +54,18 @@
 
 }
 .singleStartAndEndTime{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}
+.StartAndEndTimeWithCloseButton{
     border-radius: 10px;
     background-color: rgb(222, 222, 222);
     border: none;
-    padding: 15px 15px 5px 5px;
+    padding: 15px;
     margin:10px;
-    display: flex;
-    flex-direction: column;
+   
     position: relative;
     
 }
@@ -37,8 +74,37 @@
     background-color: transparent;
     position: absolute;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     top: 0;
     right: 0;
 
+}
+.addNewSlotButton{
+    background: linear-gradient(to right,rgb(163, 145, 241),rgb(102, 71, 240));
+    color: white;
+    width: 50%;
+    padding: 10px 0;
+    border-radius: 7px;
+    font-weight: bold;
+    border: none;
+}
+.addNewSlotButtonContainer{
+    display: flex;
+    justify-content: center;
+    width: 60%;
+}
+
+.finalSubmitButton{
+    background: linear-gradient(to right,rgb(241, 145, 172),rgb(240, 71, 130));
+    color: white;
+    width: 50%;
+    padding: 10px 0;
+    border-radius: 7px;
+    font-weight: bold;
+    border: none;
+}
+.finalSubmitButtonContainer{
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group, User
-from .models import LoginUsers,UserAccountTypes,Users,UserInformation,AccountTypes,DoctorInformation
+from .models import LoginUsers,UserAccountTypes,Users,UserInformation,AccountTypes,DoctorInformation,DoctorAvailability
 from rest_framework import permissions, viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -12,7 +12,8 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from .middlewares import CustomJWTAuthentication
 from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.views import TokenRefreshView
-from DocOsge_Backend.DocOsge.serializers import GroupSerializer, UserSerializer,LoginUserSerializer,UsersSerializer,AccountTypesSerializer,LoginUserSerializer,PasswordResetSerializer,UserInformationSerializer,CookieTokenRefreshSerializer,DoctorInformationSerializer
+from django.shortcuts import get_object_or_404
+from DocOsge_Backend.DocOsge.serializers import GroupSerializer, UserSerializer,LoginUserSerializer,UsersSerializer,AccountTypesSerializer,LoginUserSerializer,PasswordResetSerializer,UserInformationSerializer,CookieTokenRefreshSerializer,DoctorInformationSerializer,DoctorAvailabilitySerializer,DoctorSerializer
 
 
 
@@ -280,7 +281,7 @@ class LogoutUserView(viewsets.ViewSet):
         )
         return response
         
-    
+# ----------------------------------------------------------------------------------------------------------------- 
 class DoctorInfoView(viewsets.ViewSet):
     authentication_classes=[CustomJWTAuthentication]
     
@@ -317,7 +318,8 @@ class DoctorInfoView(viewsets.ViewSet):
         except Exception as error:
             return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
             
-    def list(self,request):
+    def retrieve(self,request,pk):
+        pk=None
         
         if isinstance(request.user,AnonymousUser):
             return Response({"message":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
@@ -346,17 +348,21 @@ class DoctorInfoView(viewsets.ViewSet):
         if isinstance(request.user,AnonymousUser):
             return Response({"message":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
         
+        doctor = request.data
+        doctor['user'] = request.user.get("user_id")
+        
+        
         try:
             validDoctor = AccountTypes.objects.filter(account_type_id=request.user.get("user_id")).values().first()
             if(validDoctor["account_type"] !='doctor'):
                 return Response({"message":"User is not a doctor"},status=status.HTTP_400_BAD_REQUEST)
             
             doctorData = DoctorInformation.objects.get(user_id = request.user.get("user_id"))
-            serializer = DoctorInformationSerializer(doctorData,data=request.data,partial=True)
+            serializer = DoctorInformationSerializer(doctorData,data=doctor)
             
             if(serializer.is_valid()):
                 serializer.save()
-                
+             
                 data = serializer.data
                 data.pop("id")
                 data.pop("user")
@@ -364,6 +370,155 @@ class DoctorInfoView(viewsets.ViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except DoctorInformation.DoesNotExist:
             return Response({"error": "Doctor not found"}, status=status.HTTP_404_NOT_FOUND)
+
+#-----------------------------------------------------------------------------------------------------------------
+ 
+class DoctorAvailabilityView(viewsets.ViewSet):
+    
+    authentication_classes=[CustomJWTAuthentication]
+    
+    
+    def create(self,request):
+       
+        
+        if isinstance(request.user,AnonymousUser):
+            return Response({"message":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
+        
+       
+       
+        
+        try:
+            doctorSchedule = request.data
+            
+            sorted_scheduleDates = sorted(request.data.get("availability"), key=lambda x:x["date"])
+            
+            doctorSchedule["availability"] = sorted_scheduleDates          
+            doctorSchedule['doctor'] = request.user.get("user_id")
+            
+            validDoctor = AccountTypes.objects.filter(account_type_id=doctorSchedule.get('doctor')).values().first()
+            
+            if(validDoctor["account_type"] !='doctor'):
+                return Response({"message":"User is not a doctor"},status=status.HTTP_400_BAD_REQUEST)
+            
+            
+            
+            serializer = DoctorAvailabilitySerializer(data=doctorSchedule)
+            
+                
+            if(serializer.is_valid()):
+                
+                
+                serializer.save()
+            
+                return Response(serializer.data,status=status.HTTP_201_CREATED)
+        
+        
+            return Response({"message":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
+        
+    def retrieve(self,request,pk):
+        pk=None
+        if isinstance(request.user,AnonymousUser):
+            return Response({"message":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
+        
+       
+        doctor = request.data
+        doctor['doctor'] = request.user.get("user_id")
+        
+        try:
+            
+            validDoctor = AccountTypes.objects.filter(account_type_id=doctor.get('doctor')).values().first()
+            
+            if(validDoctor["account_type"] !='doctor'):
+                return Response({"message":"User is not a doctor"},status=status.HTTP_400_BAD_REQUEST)
+            
+            queryset = DoctorAvailability.objects.all()
+            doctorSchedule = get_object_or_404(queryset,doctor_id=doctor.get('doctor'))
+            serializer = DoctorAvailabilitySerializer(doctorSchedule)
+            
+            data = serializer.data
+            data.pop("doctor")
+            data.pop("id")
+
+            return Response (data,status=status.HTTP_200_OK)
+            
+        except Exception as error:
+            return Response({"message":str(error)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def update(self,request,pk):
+        
+        if isinstance(request.user,AnonymousUser):
+            return Response({"message":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
+        
+       
+        doctorSchedule = request.data
+        doctorSchedule['doctor'] = request.user.get("user_id")
+        
+        try:
+            validDoctor = AccountTypes.objects.filter(account_type_id=doctorSchedule.get('doctor')).values().first()
+            
+            if(validDoctor["account_type"] !='doctor'):
+                return Response({"message":"User is not a doctor"},status=status.HTTP_400_BAD_REQUEST)
+            
+            doctorAvailability = DoctorAvailability.objects.get(doctor_id=doctorSchedule.get("doctor"))
+            serializer = DoctorAvailabilitySerializer(doctorAvailability,data=doctorSchedule)
+            if(serializer.is_valid()):
+                serializer.save()
+            
+                return Response(serializer.data,status=status.HTTP_200_OK)
+        
+        
+            return Response({"message":serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+            
+        
+        except Exception as error:
+        
+            return Response ({"message":str(error)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def destroy(self,request,pk):
+        pk=None
+        
+        if isinstance(request.user,AnonymousUser):
+            return Response({"message":"Unauthorized"},status=status.HTTP_401_UNAUTHORIZED)
+        
+       
+        doctorSchedule = request.data
+        doctorSchedule['doctor'] = request.user.get("user_id")
+        
+        try:
+            validDoctor = AccountTypes.objects.filter(account_type_id=doctorSchedule.get('doctor')).values().first()
+            
+            if(validDoctor["account_type"] !='doctor'):
+                return Response({"message":"User is not a doctor"},status=status.HTTP_400_BAD_REQUEST) 
+            
+            doctorAvailability = DoctorAvailability.objects.get(doctor_id=doctorSchedule.get("doctor"))
+            
+            doctorAvailability.delete()
+            
+            return Response({"message":"schedule deleted successful"},status=status.HTTP_200_OK)
+            
+        except DoctorAvailability.DoesNotExist:
+            return Response({"message":"user not found"},status=status.HTTP_404_NOT_FOUND)
+        except Exception as error:
+             return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
+         
+class Doctors(viewsets.ViewSet):
+    
+    def list(self,request):
+        
+        try:
+            querySet = DoctorInformation.objects.select_related("user").all()
+            serializer = DoctorSerializer(querySet,many=True)
+        
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        except Exception as error:
+            return Response({"message":str(error)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            
+        
+        
+        
             
             
         

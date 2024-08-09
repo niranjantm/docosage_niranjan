@@ -5,6 +5,7 @@ import { IoMdClose } from "react-icons/io";
 import useAuth from '@/hooks/useAuth';
 import { useRouter } from 'next/router';
 import {axiosPrivate} from '@/pages/api/axios';
+import Link from 'next/link';
 
 
 function MenuOptions({showOptions,setShowOptions}) {
@@ -13,6 +14,7 @@ function MenuOptions({showOptions,setShowOptions}) {
     const menuRef = useRef()
     const {userAuth,setUserAuth} = useAuth()
     const router = useRouter()
+
     useEffect(()=>{
         if(showOptions){
             menuRef.current.classList.add(classes.show)
@@ -26,6 +28,9 @@ function MenuOptions({showOptions,setShowOptions}) {
 
     const handleOptionClick= async(e)=>{
         e.preventDefault()
+
+        console.log(e.target.id)
+
         if(e.target.name ==="Logout"){
             
             try{
@@ -39,8 +44,6 @@ function MenuOptions({showOptions,setShowOptions}) {
                 console.error(error)
             }
 
-        }else{
-            router.push('/dashboard/login')
         }
     }
 
@@ -59,17 +62,51 @@ function MenuOptions({showOptions,setShowOptions}) {
         <p>{userAuth?.email?userAuth.email:''}</p>
         </div>
     </div>
-    <ul className={classes.options}>
-        {options.map((item,index)=>{
-            return(
-                <li key={index} name={options[index]} className={classes.optionWithBorder} >
-                    <p className={classes.optionText}>{item}</p>
+    <div className={classes.options}>
+        
+                <Link   href={"/"} className={classes.optionWithBorder}  >
+                    <p className={classes.optionText}>My Profile</p>
                     <FaAngleRight></FaAngleRight>
-                </li>
-            )
-        })}
+                </Link>
+                <Link   href={"/"} className={classes.optionWithBorder}  >
+                    <p className={classes.optionText}>Task</p>
+                    <FaAngleRight></FaAngleRight>
+                </Link>
+                <Link   href={"/"} className={classes.optionWithBorder}  >
+                    <p className={classes.optionText}>Habits</p>
+                    <FaAngleRight></FaAngleRight>
+                </Link>
+                <Link   href={"/"} className={classes.optionWithBorder}  >
+                    <p className={classes.optionText}>Add Members</p>
+                    <FaAngleRight></FaAngleRight>
+                </Link>
+                <Link   href={"/dashboard/FindDoctorMenu"} className={classes.optionWithBorder} onClick={()=>setShowOptions(false)} >
+                    <p className={classes.optionText}> Find Doctor</p>
+                    <FaAngleRight></FaAngleRight>
+                </Link>
+                <Link   href={"/"} className={classes.optionWithBorder}  >
+                    <p className={classes.optionText}>Find Diagnosis</p>
+                    <FaAngleRight></FaAngleRight>
+                </Link>
+                <Link href={"/"} className={classes.optionWithBorder} >
+                    <p className={classes.optionText}>Order Medication</p>
+                    <FaAngleRight></FaAngleRight>
+                </Link>
+                <Link  href={"/"} className={classes.optionWithBorder}  >
+                    <p className={classes.optionText}>Notification Settings</p>
+                    <FaAngleRight></FaAngleRight>
+                </Link>
+                <Link  href={"/"} className={classes.optionWithBorder}  >
+                    <p className={classes.optionText}>Help</p>
+                    <FaAngleRight></FaAngleRight>
+                </Link>
+                <Link  href={"/"} className={classes.optionWithBorder}  >
+                    <p className={classes.optionText}>Contact Us</p>
+                    <FaAngleRight></FaAngleRight>
+                </Link>
+            
         <button className={classes.optionWithoutBorder} type='button' name={userAuth?.name?"Logout":"Login"} onClick={handleOptionClick}>{userAuth?.name?"Logout":"Login"} <FaAngleRight></FaAngleRight></button>
-    </ul>
+    </div>
     </div>
     
    </main>

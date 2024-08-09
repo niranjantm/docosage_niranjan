@@ -14,6 +14,8 @@ function DoctorInformation() {
 
         const [error,setError] = useState("")
 
+        const [loading,setLoading] = useState(true)
+
         const [oldDoctorInfo,setOldDoctorInfo] = useState(false)
 
         const axiosPrivate = useAxiosPrivate()
@@ -80,23 +82,30 @@ function DoctorInformation() {
             
                 const getDoctorData = async()=>{
                     try{
-                    const res = await axiosPrivate.get("doctorinfo/")
+                    const res = await axiosPrivate.get("doctorinfo/info")
                     if(res.status===200){
                         console.log(res.data)
                         setOldDoctorInfo(true)
                         setFormData(res.data)
+                        setLoading(false)
                     }
                 }
                 catch(error){
                     setOldDoctorInfo(false)
+                    setLoading(false)
                     console.log(error)
                 }
                 
            
         }
         getDoctorData()},[])
-    
-        return (
+        
+        if(loading){
+            return<main>Loading...</main>
+        }
+
+        return ( 
+           
         <main className={classes.main}>
             <section className={classes.errorSection}>
                 <h2>Please provide additional Information</h2>

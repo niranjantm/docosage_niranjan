@@ -24,9 +24,13 @@ function FindDoctorMenu() {
         getDoctors()
     },[])
 
+    const handleSubmit=(e)=>{
+        e.preventDefault()
+    }
+
   return (
     <main className={classes.main}>
-        <form className={classes.searchForm}>
+        <form className={classes.searchForm} onSubmit={handleSubmit}>
             <input className={classes.searchInput} placeholder='Search doctors, clinics, etc.'></input>
             <button className={classes.searchButton}>Search</button>
         </form>

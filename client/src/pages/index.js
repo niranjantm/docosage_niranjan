@@ -21,6 +21,7 @@ console.log(userAuth)
   return (
    <div>
     {userAuth?.account_type==="doctor" && <Link href={"doctor/manageAvailability"}>manage availability</Link>}
+    {userAuth?.account_type==="customer" && <Link href={"customer/CustomerAppointments"}>My appointments</Link>}
 
    </div>
   )

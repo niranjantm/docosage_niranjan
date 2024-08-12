@@ -1,0 +1,8 @@
+.mainSection{
+    background-color: rgb(243, 241, 241);
+    padding:10px ;
+    width: 350px;
+    height: 250px;
+    border:none;
+    border-radius: 10px;
+}

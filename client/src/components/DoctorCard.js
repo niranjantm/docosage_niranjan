@@ -1,13 +1,15 @@
 import Image from 'next/image'
 import React from 'react'
 import classes from "@/styles/doctorCard.module.css"
+import { useRouter } from 'next/router'
 
 
 function DoctorCard({doctor_name,yearsOfExperience,practiceType,user_id}) {
 
+    const router = useRouter()
 
     const handleAppointmentBooking=(e)=>{
-        console.log(user_id)
+        router.push(`/customer/bookAppointment/${user_id}?doctor=${doctor_name}`)
     }
   return (
     <section className={classes.mainSection}>
@@ -17,7 +19,7 @@ function DoctorCard({doctor_name,yearsOfExperience,practiceType,user_id}) {
                 
             </div>
             <div className={classes.infoContainer}>
-                <h3>{doctor_name}</h3>
+                <h3>Dr. {doctor_name}</h3>
                 <p>{practiceType}</p>
                 <p>{`${yearsOfExperience} years experience `}</p>
                 <p>Consultation fees Here</p>

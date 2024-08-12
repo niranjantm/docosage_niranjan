@@ -34,6 +34,8 @@ router.register(r'logout',views.LogoutUserView,basename='logoutuser')
 router.register(r'doctorinfo',views.DoctorInfoView,basename="doctorinfo")
 router.register(r'doctoravailability',views.DoctorAvailabilityView,basename="doctoravailability")
 router.register(r'doctors',views.Doctors, basename="doctors")
+router.register(r'makeappointment',views.MakeAppointment, basename='makeappointment')
+router.register(r'appointment',views.AppointmentView,basename="appointment")
 # router.register(r'passwordconfirm',views.PasswordResetConfirmViewSet, basename='passwordconfirm')  
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

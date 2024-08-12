@@ -1,0 +1,74 @@
+.main{
+    width: 100%;
+    /* background-color: red; */
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+}
+.formDiv{
+    width: 70%;
+    background-color: rgb(215, 234, 255);
+    height: 100%;
+    padding: 10px;
+}
+.form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+.form h1{
+    text-align: center;
+}
+.form input{
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px gray solid;
+}
+.form textarea{
+    width: 100%;
+    min-height: 30%;
+    max-width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px gray solid;
+}
+.form div{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: left;
+    width: 50%;
+}
+.form label{
+    font-weight: bold;
+
+}
+.form span{
+    font-weight: 700;
+}
+
+@media screen and (max-width:600px) {
+    .form div{
+      width: 80%;
+    }
+}
+
+.closeButton{
+    border: none;
+    background-color: transparent;
+}
+.DoneButton{
+    width: 80%;
+    border-radius: 5px;
+
+    background: linear-gradient(to right,rgb(253, 209, 88),orange);
+    color: white;
+    font-weight: bold;
+    border: none;
+    font-size: large;
+    padding: 5px 0;
+    cursor: pointer;
+   
+}

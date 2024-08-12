@@ -1,6 +1,6 @@
 
 from django.contrib.auth.models import Group, User
-from .models import Users,AccountTypes,UserInformation,DoctorInformation,DoctorAvailability
+from .models import Users,AccountTypes,UserInformation,DoctorInformation,DoctorAvailability,Appointments
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken
@@ -86,5 +86,28 @@ class DoctorSerializer(serializers.ModelSerializer):
             "user",
             "doctor_name"
         ]
+
+class DoctorAppointmentSerializer(serializers.ModelSerializer):
+    availability = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = DoctorInformation
+        fields = ["qualification","yearsOfExperience", "practiceType","clinicAddress","clinicZipCode","availability"]
+        
+    def get_availability(self,obj):
+        try:
+            availability = obj.availability_records
+            return DoctorAvailabilitySerializer(availability).data.get("availability")
+         
+        except DoctorAvailability.DoesNotExist:
+            return None
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    doctorName = serializers.CharField(source="doctor.name",read_only=True)
+    patientName = serializers.CharField (source="patient.name",read_only=True)
+    class Meta:
+        model = Appointments
+        fields=["doctorName","patientName","date","startTime","doctor","patient","title","description"]
+    
     
     

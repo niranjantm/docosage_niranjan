@@ -25,8 +25,15 @@ const protectedRoutesCustomer = (ProtectedPage)=>{
         if(!userAuth || userAuth?.account_type!=="customer"){
             return <div>Loading...</div>
         }
+        const Page  = userAuth?<ProtectedPage {...props}/>:null;
 
-        return userAuth?<ProtectedPage {...props}/>:null;
+
+
+       if(ProtectedPage.NavLayout){
+        return <ProtectedPage.NavLayout>{Page}</ProtectedPage.NavLayout>
+    }
+
+    return Page;
     }
 }
 

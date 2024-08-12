@@ -104,8 +104,18 @@ class DoctorInformation(models.Model):
         return self.user
     
 class DoctorAvailability(models.Model):
-    doctor =  models.OneToOneField(Users,on_delete=models.CASCADE)
+    doctor =  models.OneToOneField(DoctorInformation,on_delete=models.CASCADE,related_name="availability_records")
+    user = models.OneToOneField(Users,on_delete=models.CASCADE)
     availability = models.JSONField()
+
+
+class Appointments(models.Model):
+    doctor = models.ForeignKey(Users,on_delete=models.CASCADE,related_name='doctor_appointments')
+    patient = models.ForeignKey(Users,on_delete=models.CASCADE,related_name='patient_appointments')
+    date = models.DateField(null=False)
+    startTime = models.CharField(null=False,max_length=255)
+    title = models.CharField(null=False,max_length=255)
+    description = models.CharField(null=False,max_length=255)
     
     
     

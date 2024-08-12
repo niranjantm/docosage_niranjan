@@ -46,7 +46,7 @@ function ManageAvailability() {
     getDoctorSchedule()
   },[])
 
-
+console.log(selectedDates)
 
   const handleDateChange = (e) => {
 
@@ -57,7 +57,7 @@ function ManageAvailability() {
       let myDate = {
         "date": e.target.value,
         "timeSlots": [{
-          startTime: startTime, endTime: startTime.add(1,'hour'),"booked":false
+          startTime: startTime,"booked":false
         }]
       }
       setSelectedDates([...selectedDates, myDate])
@@ -134,15 +134,15 @@ function ManageAvailability() {
           );
   
           // Determine the new start and end times
-          const newStartTime = type === 'startTime' ? newTime : item.timeSlots[timeIndex].startTime;
-          const newEndTime = type === 'endTime' ? newTime : item.timeSlots[timeIndex].endTime;
+          // const newStartTime = type === 'startTime' ? newTime : item.timeSlots[timeIndex].startTime;
+          // const newEndTime = type === 'endTime' ? newTime : item.timeSlots[timeIndex].endTime;
   
           // Check for overlap with the updated time slots
-          if (checkOverlap(newTimeSlots, newStartTime, newEndTime, timeIndex)) {
-            console.log('Time slots overlap detected');
-            alert('Time slots cannot overlap');
-            return { ...item, timeSlots: item.timeSlots }; // Revert to original time slots
-          }
+          // if (checkOverlap(newTimeSlots, newStartTime, newEndTime, timeIndex)) {
+          //   console.log('Time slots overlap detected');
+          //   alert('Time slots cannot overlap');
+          //   return { ...item, timeSlots: item.timeSlots }; // Revert to original time slots
+          // }
   
           // Update the state only if no overlap is detected
           return { ...item, timeSlots: newTimeSlots };
@@ -152,41 +152,18 @@ function ManageAvailability() {
     );
   };
 
-  // const handleAddTimeSlot = (date) => {
-  //   setSelectedDates((prevDates) =>
-  //     prevDates.map((item) =>
-  //       item?.date === date
-  //         ? {
-  //           ...item,
-  //           timeSlots: [...item.timeSlots, { startTime: '08:00', endTime: '14:00' }]
-  //         }
-  //         : item
-  //     )
-  //   );
-  // };
 
   const handleAddTimeSlot = (date) => {
     setSelectedDates((prevDates) =>
       prevDates.map((item) => {
         if (item.date === date) {
-          const newStartTime = item.timeSlots[item.timeSlots.length - 1].endTime;
-          const newStartDateTime = dayjs().set('hour', dayjs(newStartTime).hour()).set('minute', dayjs(newStartTime).minute());
-          // const newEndDateTime = new Date(newStartDateTime.getTime() + 60 * 60 * 1000);
-
-
-          const newEndTime = newStartDateTime.add(1, 'hour');
-
-
-
-          if (checkOverlap(item.timeSlots, newStartTime, newEndTime)) {
-            alert('Time slots cannot overlap');
-            return item;
-          }
-
+          let previousStartTime = item.timeSlots[item.timeSlots.length - 1].startTime;
+          previousStartTime = dayjs(previousStartTime);
+          const newStartTime = previousStartTime.add(30,"minute")
 
           return {
             ...item,
-            timeSlots: [...item.timeSlots, { startTime: newStartTime, endTime: newEndTime,"booked":false }]
+            timeSlots: [...item.timeSlots, { startTime: newStartTime,"booked":false }]
           };
 
         }
@@ -228,6 +205,7 @@ function ManageAvailability() {
       else if(!scheduleExist  && selectedDates.length!==0){
         const newSchedule = await axiosPrivate.post("doctoravailability/",JSON.stringify({"availability":selectedDates}))
         if(newSchedule.status===201){
+          setScheduleExist(true)
           console.log(newSchedule.data) //------------->ADD MESSAGE HERE LIKE CREATED SCHEDULE
         }
       }
@@ -304,9 +282,9 @@ function ManageAvailability() {
                       }}  onAccept={(time) => handleTimeChange(item.date, j, 'startTime', time)} name='startTime'></TimePicker>
 
 
-                      <label htmlFor='endTime'>End time</label>
+                      {/* <label htmlFor='endTime'>End time</label> */}
                       {/* <input type='time' id='endTime' value={t.endTime} onChange={(e) => handleTimeChange(item.date, j, 'endTime', e.target.value)}></input> */}
-                      <TimePicker value={dayjs(t.endTime)} sx={{
+                      {/* <TimePicker value={dayjs(t.endTime)} sx={{
                         '.MuiInputBase-root': {
                           height: '30px',
                           width: '120px',
@@ -319,7 +297,7 @@ function ManageAvailability() {
                           width: '14px',
                           height: '14px',
                         }
-                      }} onAccept={(time) => handleTimeChange(item.date, j, 'endTime', time)} name='startTime'></TimePicker>
+                      }} onAccept={(time) => handleTimeChange(item.date, j, 'endTime', time)} name='startTime'></TimePicker> */}
                         </div>
 
                       

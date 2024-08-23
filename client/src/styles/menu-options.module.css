@@ -1,9 +1,11 @@
 .main{
    width: 100%;
-   position: absolute;
-   height:100%;
+   position: fixed;
+   height:100vh;
     background: rgba(0, 0, 0, 0.2);
     z-index: 1;
+   
+
 
 }
 
@@ -12,7 +14,7 @@
     flex-direction: column;
     width: 300px;
     background: rgb(250, 250, 255);
-    height: 100%;
+    height: 100vh;
     overflow: hidden;
     overflow-y: scroll;
     position: absolute;

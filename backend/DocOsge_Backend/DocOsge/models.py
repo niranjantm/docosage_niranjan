@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 
 
 
@@ -24,10 +25,14 @@ class Users(models.Model):
     
     password_hash = models.CharField(max_length=255,null=False,blank=False)
     
+    created_at = models.DateTimeField(null=True,auto_now_add=True)
+    
+    updated_at = models.DateTimeField(null=True,auto_now=True)
+    
   
     
-    def __str__(self):
-        return self.email
+    # def __str__(self):
+    #     return self.email
     
     class Meta:
         db_table = 'registered_users'
@@ -104,9 +109,12 @@ class DoctorInformation(models.Model):
         return self.user
     
 class DoctorAvailability(models.Model):
-    doctor =  models.OneToOneField(DoctorInformation,on_delete=models.CASCADE,related_name="availability_records")
+    doctorInformation =  models.OneToOneField(DoctorInformation,on_delete=models.CASCADE,related_name="availability_records")
     user = models.OneToOneField(Users,on_delete=models.CASCADE)
     availability = models.JSONField()
+    
+    # def __str__(self):
+    #     return json.dumps(self.availability)
 
 
 class Appointments(models.Model):

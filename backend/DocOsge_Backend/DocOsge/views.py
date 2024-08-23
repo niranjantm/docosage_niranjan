@@ -12,6 +12,7 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from .middlewares import CustomJWTAuthentication
 from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.views import TokenRefreshView
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from DocOsge_Backend.DocOsge.serializers import GroupSerializer, UserSerializer,LoginUserSerializer,UsersSerializer,AccountTypesSerializer,LoginUserSerializer,PasswordResetSerializer,UserInformationSerializer,CookieTokenRefreshSerializer,DoctorInformationSerializer,DoctorAvailabilitySerializer,DoctorSerializer,DoctorAppointmentSerializer,AppointmentSerializer
 
@@ -114,7 +115,12 @@ class LoginUserViewSet(viewsets.ViewSet):
                 password = userSerializer.validated_data.get('password')
             
                 try:
+                    user = Users.objects.filter(email=email).exists()
+                    if(not user):
+                        return Response({"message":"invalid credentials"},status=status.HTTP_406_NOT_ACCEPTABLE)
+                    
                     user = Users.objects.get(email=email)
+                    
                     user_dict = Users.objects.filter(email=email).values().first()
                     
                     accountType = AccountTypes.objects.filter(account_type_id =user_dict['user_id']).values().first()
@@ -448,6 +454,7 @@ class DoctorAvailabilityView(viewsets.ViewSet):
             data.pop("id")
 
             return Response (data,status=status.HTTP_200_OK)
+        
             
         except Exception as error:
             return Response({"message":str(error)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -554,6 +561,7 @@ class MakeAppointment(viewsets.ViewSet):
         
         try:
             validCustomer = AccountTypes.objects.filter(account_type_id=customerId).values().first()
+            print(validCustomer)
             
             if(validCustomer["account_type"] !='customer'):
                 return Response({"message":"User is not a customer"},status=status.HTTP_400_BAD_REQUEST) 
@@ -646,6 +654,25 @@ class AppointmentView (viewsets.ViewSet):
             
         except Exception as error:
             return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
+        
+
+class DoctorSearchView(viewsets.ViewSet):
+    def list(self, request):
+        query = request.query_params.get('q', '')
+
+        if query:
+            doctors = DoctorInformation.objects.filter(
+                Q(practiceType__icontains=query) |
+                Q(user__name__icontains=query) |
+                Q(clinicAddress__icontains=query)
+            )
+        else:
+            doctors = DoctorInformation.objects.all()
+
+        serializer = DoctorSerializer(doctors, many=True)
+        
+        print()
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
     
     

@@ -16,14 +16,22 @@ function MenuOptions({showOptions,setShowOptions}) {
     const router = useRouter()
 
     useEffect(()=>{
+        const originalOverflow = document.body.style.overflow;
         if(showOptions){
             menuRef.current.classList.add(classes.show)
             menuRef.current.classList.remove(classes.hide)
+            document.body.style.overflow = 'hidden';
         }
         else{
             menuRef.current.classList.add(classes.hide)
             menuRef.current.classList.remove(classes.show)
+            document.body.style.overflow = originalOverflow;
         }
+
+        return () => {
+            
+            document.body.style.overflow = originalOverflow;
+        };
     },[showOptions])
 
     const handleOptionClick= async(e)=>{

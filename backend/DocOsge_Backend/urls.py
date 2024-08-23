@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import include, path
+from django.contrib import admin
 from rest_framework import routers
 
 from DocOsge_Backend.DocOsge import views
@@ -36,11 +37,13 @@ router.register(r'doctoravailability',views.DoctorAvailabilityView,basename="doc
 router.register(r'doctors',views.Doctors, basename="doctors")
 router.register(r'makeappointment',views.MakeAppointment, basename='makeappointment')
 router.register(r'appointment',views.AppointmentView,basename="appointment")
+router.register(r'searchdoctor',views.DoctorSearchView, basename="searchdoctor")
 # router.register(r'passwordconfirm',views.PasswordResetConfirmViewSet, basename='passwordconfirm')  
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
+    path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('passwordconfirm/',views.PasswordResetConfirmViewSet.as_view({'patch':'password_reset'}),name='passwordconfirm'),
     # path('updateuserinfo/',views.UserInfoUpdateViewSet.as_view({'post':'create'}), name='updateuserinfo'),

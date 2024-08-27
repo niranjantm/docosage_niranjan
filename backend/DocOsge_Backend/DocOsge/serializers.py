@@ -75,6 +75,10 @@ class DoctorAvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = DoctorAvailability
         fields = '__all__'
+class DoctorAvailabilityGetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoctorAvailability
+        fields = ['id', 'date', 'start_time', 'booked', 'created_at', 'updated_at']
         
 class DoctorSerializer(serializers.ModelSerializer):
     doctor_name = serializers.CharField(source="user.name",read_only=True)
@@ -96,8 +100,8 @@ class DoctorAppointmentSerializer(serializers.ModelSerializer):
         
     def get_availability(self,obj):
         try:
-            availability = obj.availability_records
-            return DoctorAvailabilitySerializer(availability).data.get("availability")
+            availability = DoctorAvailability.objects.filter(doctorInformation=obj)
+            return DoctorAvailabilityGetSerializer(availability, many=True).data
          
         except DoctorAvailability.DoesNotExist:
             return None

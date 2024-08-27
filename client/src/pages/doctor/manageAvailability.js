@@ -5,7 +5,6 @@ import DatePicker from 'react-multi-date-picker'
 import DatePanel from "react-multi-date-picker/plugins/date_panel";
 import classes from "@/styles/manageAvailability.module.css"
 import { IoMdCloseCircle } from "react-icons/io";
-// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
@@ -78,10 +77,11 @@ const checkOverlap = (timeSlots, newStartTime) => {
 
     if (!dateExist) {
       const startTime = dayjs(new Date());
+     
       let myDate = {
         "date": e.target.value,
         "timeSlots": [{
-          startTime: startTime,"booked":false
+          startTime: startTime?.$d,"booked":false
         }]
       }
       setSelectedDates([...selectedDates, myDate])
@@ -144,7 +144,7 @@ const checkOverlap = (timeSlots, newStartTime) => {
   // };
 
   const handleTimeChange = (date, timeIndex, type, value) => {
-    const newTime = value ? dayjs(value).toISOString() : null;
+    const newTime = value ? dayjs(value)?.$d : null;
   
     setSelectedDates((prevDates) =>
       prevDates.map((item) => {
@@ -208,20 +208,20 @@ const checkOverlap = (timeSlots, newStartTime) => {
             previousStartTime = dayjs(previousStartTime);
             const newStartTime = previousStartTime.add(30, "minute"); 
   
-            const overlapCheck = checkOverlap(item.timeSlots, newStartTime);
+            // const overlapCheck = checkOverlap(item.timeSlots, newStartTime);
   
-            if (overlapCheck.isOverlap) {
-              if (overlapCheck.isPastTime) {
-                alert("Cannot add time slot: The selected time is in the past.");
-              } else {
-                alert("Cannot add time slot: The selected time overlaps with an existing slot.");
-              }
-              return item; 
-            }
+            // if (overlapCheck.isOverlap) {
+            //   if (overlapCheck.isPastTime) {
+            //     alert("Cannot add time slot: The selected time is in the past.");
+            //   } else {
+            //     alert("Cannot add time slot: The selected time overlaps with an existing slot.");
+            //   }
+            //   return item; 
+            // }
   
             return {
               ...item,
-              timeSlots: [...item.timeSlots, { startTime: newStartTime, booked: false }]
+              timeSlots: [...item.timeSlots, { startTime: newStartTime?.$d, booked: false }]
             };
           }
         }
@@ -247,14 +247,14 @@ const checkOverlap = (timeSlots, newStartTime) => {
 
     
     try{
-      if(selectedDates.length===0 && scheduleExist){
-        const deleteSchedule = await axiosPrivate.delete("doctoravailability/deleteschedule/")
-        if(deleteSchedule.status===200){
-          console.log(deleteSchedule.data)
-          setScheduleExist(false)
-        }
-      }
-      else if(scheduleExist  && selectedDates.length!==0){
+      // if(selectedDates.length===0 && scheduleExist){
+      //   const deleteSchedule = await axiosPrivate.delete("doctoravailability/deleteschedule/")
+      //   if(deleteSchedule.status===200){
+      //     console.log(deleteSchedule.data)
+      //     setScheduleExist(false)
+      //   }
+      // }
+      if(scheduleExist){
         const updatedSchedule = await axiosPrivate.put("doctoravailability/updateschedule/",JSON.stringify({"availability":selectedDates}))
         if(updatedSchedule.status===200){
           console.log(updatedSchedule.data) //------------->ADD MESSAGE HERE LIKE UPDATED SCHEDULE

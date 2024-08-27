@@ -15,31 +15,39 @@ function bookAppointment() {
 
   const [doctorInfo, setDoctorInfo] = useState('')
   const [doctorAvailability, setDoctorAvailability] = useState([])
-  const [getDates, setGetDates] = useState(0)
+  const [getDates, setGetDates] = useState([])
   const [loading, setLoading] = useState(false)
   const [showAdditionDetails, setShowAdditionDetails] = useState(false)
   const [appointment,setAppointment] = useState({"date":"","startTime":"","doctor_id":doctorId,"doctor_name":router.query?.doctor})
 
 
-  const handleSelectDate = (e, index) => {
+  const handleSelectDate = async (e) => {
     e.preventDefault()
-    setGetDates(index)
+    
+    try{
+      const res = await axiosPrivate.get(`gettimeslot/${doctorId}/?date=${e.target.value}`)
+
+      if(res.status===200){
+        setAppointment((pre)=>{
+          return {...pre,"date":e.target.value}})
+        setGetDates(res.data)
+      }
+    }
+    catch(error){
+      console.log(error)
+    }
 
   }
 
-  const handleSelectTime = (e, time, day,booked) => {
+  const handleSelectTime = (e, time) => {
     e.preventDefault();
-    if(booked){
-      return
-    }
-    else{
-      setAppointment((prev)=>{
-        return {...prev,["startTime"]:time,["date"]:day}
-      })
+    setAppointment((pre)=>{
+      return {...pre,"startTime":time}
+    })
       setShowAdditionDetails(true)
     }
    
-  }
+  
 
 
 
@@ -98,9 +106,9 @@ function bookAppointment() {
         <div className={classes.dateContainer}>
           {doctorInfo?.availability === null ? <p>No appointments available</p> :
             doctorAvailability.map((item, index) => {
-              let day = new Date(item?.date).toDateString()
+              let day = new Date(item).toDateString()
               return (
-                <button type='button' onClick={(e) => handleSelectDate(e, index)} className={classes.dateButton}>{day}</button>
+                <button type='button' onClick={handleSelectDate} value={item} className={classes.dateButton}>{day}</button>
               )
             })
           }
@@ -108,13 +116,12 @@ function bookAppointment() {
         </div>
         <div className={classes.timeContainer}>
           {(doctorInfo?.availability === null) ? "" :
-
-            doctorAvailability[getDates]?.timeSlots?.map((slot, i) => {
-              let time = dayjs(slot?.startTime).format("hh:mm:a")
-              let startTime = slot.startTime
+            getDates.map((slot, i) => {
+              let time = dayjs(slot).format("hh:mm:a")
+              let startTime = slot
 
               return (
-                <button type='button' disabled={slot.booked} onClick={(e) => handleSelectTime(e, startTime, doctorAvailability[getDates]?.date,slot.booked)} className={slot?.booked ? classes.timeButtonBooked : classes.timeButtonAvailable}>{time}</button>
+                <button type='button' disabled={slot.booked} onClick={(e) => handleSelectTime(e, startTime)} className={slot?.booked ? classes.timeButtonBooked : classes.timeButtonAvailable}>{time}</button>
               )
             })}
 

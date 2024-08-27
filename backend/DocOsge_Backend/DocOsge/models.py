@@ -31,8 +31,9 @@ class Users(models.Model):
     
   
     
-    # def __str__(self):
-    #     return self.email
+    def __str__(self):
+        print(f"User __str__ method called with user_id: {self.user_id}")
+        return str(self.user_id)
     
     class Meta:
         db_table = 'registered_users'
@@ -106,12 +107,16 @@ class DoctorInformation(models.Model):
     
     
     def __str__(self):
-        return self.user
+        return str(self.pk)
     
 class DoctorAvailability(models.Model):
-    doctorInformation =  models.OneToOneField(DoctorInformation,on_delete=models.CASCADE,related_name="availability_records")
-    user = models.OneToOneField(Users,on_delete=models.CASCADE)
-    availability = models.JSONField()
+    doctorInformation =  models.ForeignKey(DoctorInformation,on_delete=models.CASCADE,related_name="availability_records")
+    user = models.ForeignKey(Users,on_delete=models.CASCADE)
+    date = models.DateField(null=True)
+    start_time = models.CharField(max_length=100,null=True)
+    booked = models.BooleanField(default=False)
+    created_at = models.DateTimeField(null=True,auto_now_add=True)
+    updated_at = models.DateTimeField(null=True,auto_now=True)
     
     # def __str__(self):
     #     return json.dumps(self.availability)

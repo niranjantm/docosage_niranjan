@@ -1,8 +1,35 @@
 .mainSection{
     background-color: rgb(243, 241, 241);
     padding:10px ;
-    width: 350px;
-    height: 250px;
+    width: fit-content;
+    height: fit-content;
     border:none;
     border-radius: 10px;
+}
+
+.buttonContainer{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px;
+}
+.rescheduleButton{
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(to right,rgb(163, 145, 241),rgb(102, 71, 240));
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+}
+.cancelButton{
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(to right,rgb(241, 145, 145),rgb(240, 71, 71));
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
 }

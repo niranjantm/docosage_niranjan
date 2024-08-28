@@ -694,12 +694,12 @@ class GetAppointmentTimeView(viewsets.ViewSet):
             if (str(validCustomer.account_type) != 'customer'):
                 return Response({"message": "User is not a customer"}, status=status.HTTP_400_BAD_REQUEST)
             
-            availability = DoctorAvailability.objects.filter(Q(user_id=pk) & Q(date=date)).values()
+            availability = DoctorAvailability.objects.filter(Q(user_id=pk) & Q(date=date) & Q(booked=False)).values()
             
             timeSlots = []
             for record in availability:
                 
-                timeSlots.append(record.get("start_time"))
+                timeSlots.append({"startTime":record.get("start_time"),"availability_id":record.get("id")})
             
             
             
@@ -721,8 +721,9 @@ class AppointmentView (viewsets.ViewSet):
         customerId = request.user.get("user_id")
 
         data = request.data
+        
         data['patient'] = customerId
-
+       
         try:
             validCustomer = UserAccountTypes.objects.select_related(
                 "account_type").get(user_id=customerId)
@@ -731,29 +732,31 @@ class AppointmentView (viewsets.ViewSet):
 
             serializer = AppointmentSerializer(data=data)
             if (serializer.is_valid()):
+                
+                if data.get("reschedule") and data.get("oldAppointmentId"):
+                    old_appointment = Appointments.objects.get(doctor_availability_id=data.get("oldAppointmentId"))
+                    old_schedule = DoctorAvailability.objects.get(pk=data.get("oldAppointmentId"))
+                    old_schedule.booked=False
+                    old_appointment.delete()
+                    old_schedule.save()
+                   
+                    doctor_availability_id = serializer.validated_data.get("doctor_availability").id
+                    doctor_schedule = DoctorAvailability.objects.get(pk=doctor_availability_id)
+                
+                    doctor_schedule.booked=True
+                    doctor_schedule.save()
+                    serializer.save()
+                else:
+                    doctor_availability_id = serializer.validated_data.get("doctor_availability").id
+                    doctor_schedule = DoctorAvailability.objects.get(pk=doctor_availability_id)
+                    
+                    doctor_schedule.booked=True
+                    doctor_schedule.save()
+                    serializer.save()
 
-                doctor_id = request.data.get("doctor")
-                target_date = request.data.get("date")
-                target_start_time = request.data.get("startTime")
-
-                doctor_schedule = get_object_or_404(
-                    DoctorAvailability, user=doctor_id)
-
-                availability = doctor_schedule.availability
-
-                for date_entry in availability:
-                    if date_entry['date'] == target_date:
-                        for time_slot in date_entry['timeSlots']:
-                            if time_slot['startTime'] == target_start_time:
-                                time_slot['booked'] = True
-                                break
-
-                doctor_schedule.availability = availability
-                doctor_schedule.save()
-                serializer.save()
                 return Response({"message": "Appointment created"}, status=status.HTTP_201_CREATED)
 
-            return Response(serializer.errors, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
             return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -780,6 +783,28 @@ class AppointmentView (viewsets.ViewSet):
 
         except Exception as error:
             return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def destroy(self,request,pk):
+        if isinstance(request.user, AnonymousUser):
+            return Response({"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        customerId = request.user.get("user_id")
+
+        try:
+            validCustomer = UserAccountTypes.objects.select_related(
+                "account_type").get(user_id=customerId)
+            if (str(validCustomer.account_type) != 'customer'):
+                return Response({"message": "User is not a customer"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            appointment = Appointments.objects.get(doctor_availability_id=pk)
+            doctor_schedule = DoctorAvailability.objects.get(pk=pk)
+            doctor_schedule.booked=False
+            appointment.delete()
+            doctor_schedule.save()
+            
+            return Response({"message":"appointment deleted"},status=status.HTTP_200_OK)
+        except Exception as error:
+             return Response(str(error),status=status.HTTP_400_BAD_REQUEST)
 
 
 class DoctorSearchView(viewsets.ViewSet):

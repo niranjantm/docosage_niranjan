@@ -125,6 +125,7 @@ class DoctorAvailability(models.Model):
 class Appointments(models.Model):
     doctor = models.ForeignKey(Users,on_delete=models.CASCADE,related_name='doctor_appointments')
     patient = models.ForeignKey(Users,on_delete=models.CASCADE,related_name='patient_appointments')
+    doctor_availability = models.OneToOneField(DoctorAvailability,related_name='doctor_avalability',null=True,on_delete=models.SET_NULL)
     date = models.DateField(null=False)
     startTime = models.CharField(null=False,max_length=255)
     title = models.CharField(null=False,max_length=255)

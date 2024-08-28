@@ -6,6 +6,7 @@ import Link from "next/link";
 import Layout from "@/components/Navbar/Layout";
 import { useEffect } from "react";
 import useAuth from "@/hooks/useAuth";
+import CustomerAppointments from "./customer/CustomerAppointments";
 
 
 
@@ -21,7 +22,7 @@ console.log(userAuth)
   return (
    <div>
     {userAuth?.account_type==="doctor" && <Link href={"doctor/manageAvailability"}>manage availability</Link>}
-    {userAuth?.account_type==="customer" && <Link href={"customer/CustomerAppointments"}>My appointments</Link>}
+    {userAuth?.account_type==="customer" && <CustomerAppointments></CustomerAppointments>}
 
    </div>
   )
@@ -29,3 +30,4 @@ console.log(userAuth)
 
 }
 Home.NavLayout = Layout
+

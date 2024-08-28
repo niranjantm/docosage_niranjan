@@ -3,12 +3,15 @@ import dayjs from 'dayjs'
 import classes from "@/styles/customerAppointmentDetailPopup.module.css"
 import { IoMdCloseCircle } from "react-icons/io";
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
+import { useRouter } from 'next/router';
 
 function CustomerAppointmentDetailPopup({ show, setShow, appointmentDetail }) {
 
     const [formData,setFormData] = useState({title:"",description:""})
 
     const axiosPrivate = useAxiosPrivate()
+
+    const router = useRouter()
     
 
     const handleChange=(e)=>{
@@ -23,10 +26,11 @@ function CustomerAppointmentDetailPopup({ show, setShow, appointmentDetail }) {
             return
         }else{
             try{
-                const data = {...formData,doctor:appointmentDetail.doctor_id,startTime:appointmentDetail.startTime,date:appointmentDetail.date}
+                const data = {...formData,"doctor":appointmentDetail.doctor_id,"startTime":appointmentDetail.startTime,"date":appointmentDetail.date,"doctor_availability":appointmentDetail.availability_id,"reschedule":appointmentDetail?.reschedule,"oldAppointmentId":appointmentDetail?.oldAppointmentId}
+              
                 const res = await axiosPrivate.post("appointment/",data)
                 if(res.status===201){
-                    console.log(res.data)
+                    router.push("/")
                     
                 }
             }catch(error){

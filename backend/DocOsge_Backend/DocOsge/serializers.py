@@ -111,7 +111,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
     patientName = serializers.CharField (source="patient.name",read_only=True)
     class Meta:
         model = Appointments
-        fields=["doctorName","patientName","date","startTime","doctor","patient","title","description"]
+        fields=["doctorName","patientName","date","startTime","doctor","patient","title","description","doctor_availability"]
     
     
     

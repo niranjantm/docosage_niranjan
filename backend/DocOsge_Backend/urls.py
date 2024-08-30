@@ -17,6 +17,8 @@ Including another URLconf
 from django.urls import include, path
 from django.contrib import admin
 from rest_framework import routers
+from django.conf import settings
+from django.conf.urls.static import static
 
 from DocOsge_Backend.DocOsge import views
 from rest_framework_simplejwt.views import (
@@ -39,6 +41,7 @@ router.register(r'makeappointment',views.GetAppointmentDatesView, basename='make
 router.register(r'gettimeslot',views.GetAppointmentTimeView,basename="gettimeslot")
 router.register(r'appointment',views.AppointmentView,basename="appointment")
 router.register(r'searchdoctor',views.DoctorSearchView, basename="searchdoctor")
+router.register(r'healthrecord',views.PatientHealthRecordView, basename="healthrecord")
 # router.register(r'passwordconfirm',views.PasswordResetConfirmViewSet, basename='passwordconfirm')  
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -52,4 +55,5 @@ urlpatterns = [
    
 ]
 
-urlpatterns += router.urls
+# urlpatterns += router.urls
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

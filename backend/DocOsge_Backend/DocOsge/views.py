@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group, User
-from .models import LoginUsers, UserAccountTypes, Users, UserInformation, AccountTypes, DoctorInformation, DoctorAvailability, Appointments
+from .models import LoginUsers, UserAccountTypes, Users, UserInformation, AccountTypes, DoctorInformation, DoctorAvailability, Appointments,PatientHealthRecords,PatientHealthRecordFiles
 from rest_framework import permissions, viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -734,11 +734,17 @@ class AppointmentView (viewsets.ViewSet):
             if (serializer.is_valid()):
                 
                 if data.get("reschedule") and data.get("oldAppointmentId"):
-                    old_appointment = Appointments.objects.get(doctor_availability_id=data.get("oldAppointmentId"))
-                    old_schedule = DoctorAvailability.objects.get(pk=data.get("oldAppointmentId"))
-                    old_schedule.booked=False
+                    old_appointment = Appointments.objects.get(pk=data.get("oldAppointmentId"))
+                   
+                    if(old_appointment.patient.pk!=data.get("patient")):
+                        return Response({"message":"Reschedule your own appointment"},status=status.HTTP_400_BAD_REQUEST)
+                   
+                    if old_appointment.doctor_availability:
+                        old_schedule = DoctorAvailability.objects.get(pk=old_appointment.doctor_availability.pk)
+                        old_schedule.booked=False
+                        old_schedule.save()
                     old_appointment.delete()
-                    old_schedule.save()
+                    
                    
                     doctor_availability_id = serializer.validated_data.get("doctor_availability").id
                     doctor_schedule = DoctorAvailability.objects.get(pk=doctor_availability_id)
@@ -796,11 +802,19 @@ class AppointmentView (viewsets.ViewSet):
             if (str(validCustomer.account_type) != 'customer'):
                 return Response({"message": "User is not a customer"}, status=status.HTTP_400_BAD_REQUEST)
             
-            appointment = Appointments.objects.get(doctor_availability_id=pk)
-            doctor_schedule = DoctorAvailability.objects.get(pk=pk)
-            doctor_schedule.booked=False
+            
+            
+            appointment = Appointments.objects.get(pk=pk)
+            
+            # print(appointment.doctor_availability==None)
+            if appointment.doctor_availability:
+    
+                doctor_schedule = DoctorAvailability.objects.get(pk=appointment.doctor_availability.pk)
+                doctor_schedule.booked=False
+                doctor_schedule.save()
+            
             appointment.delete()
-            doctor_schedule.save()
+           
             
             return Response({"message":"appointment deleted"},status=status.HTTP_200_OK)
         except Exception as error:
@@ -822,5 +836,120 @@ class DoctorSearchView(viewsets.ViewSet):
 
         serializer = DoctorSerializer(doctors, many=True)
 
-        print()
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class PatientHealthRecordView(viewsets.ViewSet):
+    authentication_classes = [CustomJWTAuthentication]
+    
+    def create(self,request):
+        
+        
+        if isinstance(request.user, AnonymousUser ) or request.user is None:
+            return Response({"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        customerId = request.user.get("user_id")
+        print(request.data)
+
+        try:
+            validCustomer = UserAccountTypes.objects.select_related(
+                "account_type").get(user_id=customerId)
+            if (str(validCustomer.account_type) != 'customer'):
+                return Response({"message": "User is not a customer"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            files = request.FILES.getlist('files')  
+            title = request.data.get('title')
+            report_type = request.data.get("report_type")
+            description = request.data.get('description')
+            
+            user_instance = Users.objects.get(pk=customerId)
+            health_record = PatientHealthRecords.objects.create(
+            patient=user_instance,
+            title=title,
+            description=description,
+            report_type=report_type
+            )
+            
+            patient_files = []
+            for file in files:
+                single_file={
+                    "health_record":health_record,
+                    "file_url":file
+                }
+                patient_files.append(PatientHealthRecordFiles(**single_file))
+            
+            PatientHealthRecordFiles.objects.bulk_create(patient_files)
+            
+            files = PatientHealthRecordFiles.objects.filter(health_record = health_record.pk)
+            file_urls = []
+            for file in files:
+                file_urls.append(file.file_url.url)
+            
+            data ={
+                "file_urls": file_urls,
+                "title" :health_record.title,
+                "description" :health_record.description,
+                "report_type":health_record.report_type,
+                "uploaded_at":health_record.created_at,
+                "record_id":health_record.pk
+            }
+            
+            return Response(data,status=status.HTTP_201_CREATED)
+        except Exception as error:
+            return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
+        
+    def list(self,request):
+        
+        if isinstance(request.user, AnonymousUser ) or request.user is None:
+            return Response({"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        customerId = request.user.get("user_id")
+
+        try:
+            validCustomer = UserAccountTypes.objects.select_related(
+                "account_type").get(user_id=customerId)
+            if (str(validCustomer.account_type) != 'customer'):
+                return Response({"message": "User is not a customer"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            records = PatientHealthRecords.objects.filter(patient_id = customerId)
+            
+            patient_records = []
+            for record in records:
+                data={
+                    "title":record.title,
+                    "description":record.description,
+                    "report_type":record.report_type,
+                    "uploaded_at":record.created_at,
+                    "record_id":record.pk
+                    
+                }
+                file_urls = []
+                files = PatientHealthRecordFiles.objects.filter(health_record_id=record.pk)
+                for file in files:
+                    file_urls.append(file.file_url.url)
+                data["file_urls"] = file_urls
+                patient_records.append(data)
+            
+            return Response(patient_records,status=status.HTTP_200_OK)
+       
+        except Exception as error:
+            return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
+    
+    def destroy(self,request,pk):
+        if isinstance(request.user, AnonymousUser ) or request.user is None:
+            return Response({"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        customerId = request.user.get("user_id")
+
+        try:
+            validCustomer = UserAccountTypes.objects.select_related(
+                "account_type").get(user_id=customerId)
+            if (str(validCustomer.account_type) != 'customer'):
+                return Response({"message": "User is not a customer"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            patient_record = PatientHealthRecords.objects.get(pk=pk)
+            patient_record.delete()
+            
+            return Response({"message":"Record deleted"},status=status.HTTP_200_OK)
+        except Exception as error:
+            return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
+        

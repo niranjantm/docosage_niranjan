@@ -51,7 +51,8 @@ console.log(selectedDates)
 const checkOverlap = (timeSlots, newStartTime) => {
   const newStart = dayjs(newStartTime);
   const now = dayjs(); 
-
+  
+console.log(newStart)
   
   if (newStart.isBefore(now)) {
     return { isOverlap: true, isPastTime: true }; 
@@ -61,8 +62,9 @@ const checkOverlap = (timeSlots, newStartTime) => {
   for (let i = 0; i < timeSlots.length; i++) {
     const slot = timeSlots[i];
     const startTime = dayjs(slot.startTime);
+    console.log(startTime)
 
-    if (newStart.isSame(startTime)) {
+    if (newStart.isSame(startTime) ) {
       return { isOverlap: true, isPastTime: false }; 
     }
   }
@@ -76,14 +78,19 @@ const checkOverlap = (timeSlots, newStartTime) => {
     let dateExist = selectedDates.some(item => item.date === e.target.value)
 
     if (!dateExist) {
-      const startTime = dayjs(new Date());
-     
+      const suppliedDate = e.target.value
+      const currentTime = dayjs()
+      
+      const startTime = dayjs(suppliedDate).hour(currentTime.hour()).minute(currentTime.minute()).second(currentTime.second()).format('YYYY-MM-DD HH:mm:ss')
+      
       let myDate = {
         "date": e.target.value,
         "timeSlots": [{
-          startTime: startTime?.$d,"booked":false
+          startTime: startTime,"booked":false
         }]
       }
+  
+      
       setSelectedDates([...selectedDates, myDate])
     }
 
@@ -94,29 +101,6 @@ const checkOverlap = (timeSlots, newStartTime) => {
   console.log(selectedDates)
 
 
-  // const checkOverlap = (timeSlots, newStartTime, newEndTime, index = -1) => {
-  //   const newStart = dayjs(newStartTime);
-  //   const newEnd = dayjs(newEndTime);
-    
-  
-  //   for (let i = 0; i < timeSlots.length; i++) {
-  //     if (i === index) continue; 
-  
-  //     const slot = timeSlots[i];
-  //     const startTime = dayjs(slot.startTime);
-  //     const endTime = dayjs(slot.endTime);
-  
-     
-  //     if ((newStart.isBefore(endTime) && newStart.isAfter(startTime)) ||
-  //     (newEnd.isAfter(startTime) && newEnd.isBefore(endTime)) ||
-  //     (newStart.isBefore(startTime) && newEnd.isAfter(endTime))){
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // };
-
-
 
   const handleDeleteDate=(date,index)=>{
     let newDates = selectedDates.filter((_,i)=>i!=index)
@@ -125,26 +109,8 @@ const checkOverlap = (timeSlots, newStartTime) => {
 
   
 
-  // const handleTimeChange = (date, timeIndex, type, value) => {
-  //   const newTime = value ? dayjs(value) : null;
-  
-  //   setSelectedDates((prevDates) =>
-  //     prevDates.map((item) => {
-  //       if (item.date === date) {
-
-  //         const newTimeSlots = item.timeSlots.map((slot, index) =>
-  //           index === timeIndex ? { ...slot, [type]: newTime} : slot
-  //         );
-  
-  //         return { ...item, timeSlots: newTimeSlots };
-  //       }
-  //       return item;
-  //     })
-  //   );
-  // };
-
   const handleTimeChange = (date, timeIndex, type, value) => {
-    const newTime = value ? dayjs(value)?.$d : null;
+    const newTime = value ? dayjs(value).format('YYYY-MM-DD HH:mm:ss') : null;
   
     setSelectedDates((prevDates) =>
       prevDates.map((item) => {
@@ -179,24 +145,6 @@ const checkOverlap = (timeSlots, newStartTime) => {
   };
 
 
-  // const handleAddTimeSlot = (date) => {
-  //   setSelectedDates((prevDates) =>
-  //     prevDates.map((item) => {
-  //       if (item.date === date) {
-  //         let previousStartTime = item.timeSlots[item.timeSlots.length - 1].startTime;
-  //         previousStartTime = dayjs(previousStartTime);
-  //         const newStartTime = previousStartTime.add(30,"minute")
-
-  //         return {
-  //           ...item,
-  //           timeSlots: [...item.timeSlots, { startTime: newStartTime,"booked":false }]
-  //         };
-
-  //       }
-  //       return item;
-  //     })
-  //   );
-  // };
 
   const handleAddTimeSlot = (date) => {
     setSelectedDates((prevDates) =>
@@ -206,7 +154,8 @@ const checkOverlap = (timeSlots, newStartTime) => {
           
           if (previousStartTime) {
             previousStartTime = dayjs(previousStartTime);
-            const newStartTime = previousStartTime.add(30, "minute"); 
+            const newStartTime = previousStartTime.add(30, "minute").format('YYYY-MM-DD HH:mm:ss'); 
+            console.log(newStartTime)
   
             // const overlapCheck = checkOverlap(item.timeSlots, newStartTime);
   
@@ -221,7 +170,7 @@ const checkOverlap = (timeSlots, newStartTime) => {
   
             return {
               ...item,
-              timeSlots: [...item.timeSlots, { startTime: newStartTime?.$d, booked: false }]
+              timeSlots: [...item.timeSlots, { startTime: newStartTime, booked: false }]
             };
           }
         }
@@ -282,9 +231,8 @@ const checkOverlap = (timeSlots, newStartTime) => {
     return maxDate.toISOString().split('T')[0];
   };
 
-
-  // console.log("Selected Dates: ", selectedDates)
-  // console.log(JSON.stringify({"availability":selectedDates}))
+console.log(JSON.stringify(selectedDates))
+ 
 
   if(loading){
     return<main>Loading...</main>

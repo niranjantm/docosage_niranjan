@@ -5,4 +5,6 @@ from . import models
 
 admin.site.register(models.Users)
 admin.site.register(models.AccountTypes)
+admin.site.register(models.PatientHealthRecordFiles)
+admin.site.register(models.PatientHealthRecords)
 # admin.site.register(models.DoctorAvailability)

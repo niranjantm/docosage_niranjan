@@ -11,7 +11,7 @@ function AppointmentCard({appointmentData,handleAppointmentDelete}) {
   const handleCancelAppointment= async(e)=>{
     e.preventDefault();
     try{
-      const res = await axiosPrivate.delete(`appointment/${appointmentData.doctor_availability}`)
+      const res = await axiosPrivate.delete(`appointment/${appointmentData.id}`)
       if(res.status===200){
         console.log(res.data)
         handleAppointmentDelete(appointmentData.doctor_availability)
@@ -34,7 +34,7 @@ function AppointmentCard({appointmentData,handleAppointmentDelete}) {
         </div>
         <div className={classes.buttonContainer}>
           <button className={classes.cancelButton} type='button' onClick={handleCancelAppointment}>Cancel appointment</button>
-          <Link className={classes.rescheduleButton} href={`customer/bookAppointment/${appointmentData.doctor}?doctor=${appointmentData.doctorName}&reschedule=${true}&appointment_id=${appointmentData.doctor_availability}`}>Reschedule appointment</Link>
+          <Link className={classes.rescheduleButton} href={`customer/bookAppointment/${appointmentData.doctor}?doctor=${appointmentData.doctorName}&reschedule=${true}&appointment_id=${appointmentData.id}`}>Reschedule appointment</Link>
         </div>
     </section>
   )

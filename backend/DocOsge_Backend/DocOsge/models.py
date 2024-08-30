@@ -131,5 +131,19 @@ class Appointments(models.Model):
     title = models.CharField(null=False,max_length=255)
     description = models.CharField(null=False,max_length=255)
     
+class PatientHealthRecords(models.Model):
+    patient = models.ForeignKey(Users,on_delete=models.CASCADE,related_name="patient")
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True)
+    report_type = models.CharField(max_length=255,null=True)
+    created_at = models.DateTimeField(null=True,auto_now_add=True)
+    updated_at = models.DateTimeField(null=True,auto_now=True)
+    
+class PatientHealthRecordFiles(models.Model):
+    health_record = models.ForeignKey(PatientHealthRecords,on_delete=models.CASCADE,related_name="health_record")
+    file_url = models.FileField(upload_to="health_records")
+    created_at = models.DateTimeField(null=True,auto_now_add=True)
+    updated_at = models.DateTimeField(null=True,auto_now=True)
+    
     
     

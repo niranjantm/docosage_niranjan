@@ -1,6 +1,6 @@
 
 from django.contrib.auth.models import Group, User
-from .models import Users,AccountTypes,UserInformation,DoctorInformation,DoctorAvailability,Appointments
+from .models import Users,AccountTypes,UserInformation,DoctorInformation,DoctorAvailability,Appointments,PatientHealthRecords
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.exceptions import InvalidToken
@@ -111,7 +111,12 @@ class AppointmentSerializer(serializers.ModelSerializer):
     patientName = serializers.CharField (source="patient.name",read_only=True)
     class Meta:
         model = Appointments
-        fields=["doctorName","patientName","date","startTime","doctor","patient","title","description","doctor_availability"]
-    
+        fields=["id","doctorName","patientName","date","startTime","doctor","patient","title","description","doctor_availability"]
+        
+# class PatientHealthRecordSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PatientHealthRecords
+#         fields = "__all__"
+        
     
     

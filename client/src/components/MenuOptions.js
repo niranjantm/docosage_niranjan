@@ -77,7 +77,7 @@ function MenuOptions({ showOptions, setShowOptions }) {
                         <FaAngleRight></FaAngleRight>
                     </Link>
                     {
-                        userAuth?.account_type === "customer" && <Link href={"customer/HealthRecords"} className={classes.optionWithBorder}><p className={classes.optionText}>Health Records</p>
+                        userAuth?.account_type === "customer" && <Link href={"/customer/HealthRecords"} className={classes.optionWithBorder}><p className={classes.optionText}>Health Records</p>
                             <FaAngleRight></FaAngleRight></Link>
                     }
                     <Link href={"/"} className={classes.optionWithBorder}  >

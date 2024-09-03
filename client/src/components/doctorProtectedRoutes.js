@@ -12,14 +12,13 @@ const protectedRoutesDoctor=(ProtectedPage)=>{
     
     useEffect(()=>{
         console.log(userAuth)
-        if(userAuth?.account_type!=="doctor"){
+        if(!userAuth){
+            router.push("/dashboard/login")
+        }
+        else if(userAuth?.account_type!=="doctor"){
           
             router.replace("/")
                
-        }
-        else if(userAuth?.account_type!=='doctor'){
-            
-            router.back()
         }
     },[userAuth])
 

@@ -6,10 +6,15 @@ import Image from 'next/image'
 import { IoMdCloseCircle } from "react-icons/io";
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import reports from '@/data/patientReportOptions'
+import { FaFilePdf } from "react-icons/fa";
+import Swal from 'sweetalert2'
+import { useRouter } from 'next/router'
 
 function HealthRecords() {
 
     const baseUrl = "http://localhost:8000"
+    const router = useRouter()
+    
 
 
 
@@ -74,9 +79,17 @@ function HealthRecords() {
                 setSavedFiles(pre => [response.data,...pre])
                 setFiles([])
                 setFormData({title:"",description:""})
+                Swal.fire({
+                    icon: "success",
+                    title: "File Uploaded",
+                  });
             }
         } catch (error) {
-            console.error('Error uploading file:', error);
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong!",
+              });
 
         }
 
@@ -99,7 +112,11 @@ function HealthRecords() {
                 setSavedFiles(updatedOldRecords)
             }
         }catch(error){
-            console.log(error)
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Something went wrong!",
+              });
         }
     }
 
@@ -108,17 +125,29 @@ function HealthRecords() {
        try{
         const res = await axiosPrivate.get("healthrecord/")
         if(res.status==200){
-            console.log(res.data)
             setSavedFiles(res.data)
         }
        }catch(error){
-        console.log(error)
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!",
+            confirmButtonText:"OK"
+          }).then((result)=>{
+            if(result.isConfirmed){
+               router.back()
+            }
+          });
+         
+          
        }
        }
        fetchOldRecords()
     },[])
 
-
+    const isPDF = (url) => {
+        return url.endsWith('.pdf');
+    };
 
     return (
         <main className={classes.main}>
@@ -146,7 +175,7 @@ function HealthRecords() {
                     </div>
 
                     <div>
-                        <input name='files' type='file' accept='pdf,image/*' onChange={handleFileChange} ref={fileRef} multiple hidden></input>
+                        <input name='files' type='file' accept='application/pdf,image/*' onChange={handleFileChange} ref={fileRef} multiple hidden></input>
                         <button type='button' onClick={handleUploadFile}>Upload image</button>
                     </div>
 
@@ -156,10 +185,21 @@ function HealthRecords() {
                 <section className={classes.selectedFilesContainer}>
                    
                     {files.map((file, index) => {
+                       
                         return (
                             <div key={index} className={classes.selectedFileDiv}>
                                 <button className={classes.removeImageButton} type='button' onClick={() => handleRemoveFile(index)}><IoMdCloseCircle size={25} color='red'></IoMdCloseCircle></button>
-                                <Image className={classes.selectedImage} src={URL.createObjectURL(file)} width={200} height={200} alt={`document-${index}`} ></Image>
+                                {isPDF((file?.name)) ? (
+                                        <div>
+                                            <FaFilePdf size={150} color='red'></FaFilePdf>
+                                            <p>{file?.name}</p>
+                                        </div>
+                                           
+                                    ) : (
+                                        
+                                            <Image alt={`document-${index}`} src={URL.createObjectURL(file)} width={150} height={150} />
+                                        
+                                    )}
                             </div>
 
                         )
@@ -183,9 +223,16 @@ function HealthRecords() {
                             {item?.file_urls?.map((url, i) => {
                                 return (
                                 <div key={i}>
-                                    <a href={baseUrl+url} download={true} target='_blank'>
-                                    <Image key={i} alt={`${item.title} file`} src={`http://localhost:8000${url}`} width={100} height={100}></Image>
-                                    </a>
+                                      {isPDF(url) ? (
+                                        <a href={baseUrl + url} target='_blank' rel='noopener noreferrer'>
+                                            <FaFilePdf size={100} color='red'></FaFilePdf>
+                                            <p>{url.split("/").reverse()[0]}</p>
+                                        </a>
+                                    ) : (
+                                        <a href={baseUrl + url} target='_blank' rel='noopener noreferrer'>
+                                            <Image alt={`${item.title} file`} src={baseUrl + url} width={100} height={100} />
+                                        </a>
+                                    )}
                                     
                                 </div>
                                    

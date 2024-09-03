@@ -626,7 +626,7 @@ class Doctors(viewsets.ViewSet):
             return Response({"message": str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# -----------------------------------CUSTOMER APPOINTMENT BOOKING VIEW------------------------------------------------------------
+# -----------------------------------DATE AND TIME APPOINTMENT BOOKING VIEW------------------------------------------------------------
 
 class GetAppointmentDatesView(viewsets.ViewSet):
 
@@ -708,7 +708,7 @@ class GetAppointmentTimeView(viewsets.ViewSet):
         except Exception as error:
             return Response({"message":str(error)},status=status.HTTP_400_BAD_REQUEST)
 
-
+# -------------------------------------------------APPOINTMENT VIEW----------------------------------------------------------------
 class AppointmentView (viewsets.ViewSet):
 
     authentication_classes = [CustomJWTAuthentication]

@@ -4,6 +4,7 @@ import classes from "@/styles/customerAppointmentDetailPopup.module.css"
 import { IoMdCloseCircle } from "react-icons/io";
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
 import { useRouter } from 'next/router';
+import Swal from 'sweetalert2';
 
 function CustomerAppointmentDetailPopup({ show, setShow, appointmentDetail }) {
 
@@ -30,11 +31,25 @@ function CustomerAppointmentDetailPopup({ show, setShow, appointmentDetail }) {
               
                 const res = await axiosPrivate.post("appointment/",data)
                 if(res.status===201){
-                    router.push("/")
-                    
+                    const result = await Swal.fire({
+                            icon: "success",
+                            title: "Appoinment created",
+                            confirmButtonText:"OK"
+                          });
+                          if(result.isConfirmed){
+                            router.push("/");
+                          } 
                 }
             }catch(error){
-                console.log(error)
+                const result = await  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong!",
+                    confirmButtonText:"Go Back"
+                  });
+                  if(result.isConfirmed){
+                    router.back()
+                  }
             }
         }
        

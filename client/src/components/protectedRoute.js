@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useAuth from "@/hooks/useAuth";
+import Swal from "sweetalert2";
 
 const protectedRoutesCustomer = (ProtectedPage)=>{
     return (props)=>{
@@ -10,15 +11,31 @@ const protectedRoutesCustomer = (ProtectedPage)=>{
         useEffect(()=>{
             console.log(userAuth)
             if(!userAuth){
-                // if(userAuth?.account_type!=="customer"){
-                //     router.back()
-                // }
-                router.replace("/")
+                Swal.fire({
+                    icon: "error",
+                    title: "Unauthorised!",
+                    text: "You have to login to access this page",
+                    confirmButtonText:"Go Back"
+                }).then((result)=>{
+                    if(result.isConfirmed){
+                        router.replace("/")
+                    }
+                })
+                
                 
                    
             }
             else if(userAuth?.account_type!=='customer'){
-                router.back()
+                Swal.fire({
+                    icon: "error",
+                    title: "Unauthorised!",
+                    text: "You have to login as a customer to access this page",
+                    confirmButtonText:"Go Back"
+                }).then((result)=>{
+                    if(result.isConfirmed){
+                        router.back()
+                    }
+                })
             }
         },[userAuth])
        

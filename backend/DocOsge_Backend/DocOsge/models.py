@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
+import os
 
 
 
@@ -138,6 +139,15 @@ class PatientHealthRecords(models.Model):
     report_type = models.CharField(max_length=255,null=True)
     created_at = models.DateTimeField(null=True,auto_now_add=True)
     updated_at = models.DateTimeField(null=True,auto_now=True)
+    
+    def delete(self,*args,**kwargs):
+        for file in self.health_record.all():
+            if file.file_url:
+                if os.path.isfile(file.file_url.path):
+                   os.remove(file.file_url.path)
+            file.delete()
+        super().delete(*args, **kwargs)
+
     
 class PatientHealthRecordFiles(models.Model):
     health_record = models.ForeignKey(PatientHealthRecords,on_delete=models.CASCADE,related_name="health_record")

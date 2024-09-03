@@ -3,6 +3,7 @@ import classes from "@/styles/appointmentCard.module.css"
 import dayjs from 'dayjs'
 import Link from 'next/link'
 import useAxiosPrivate from '@/hooks/useAxiosPrivate';
+import Swal from 'sweetalert2';
 
 function AppointmentCard({appointmentData,handleAppointmentDelete}) {
 
@@ -10,18 +11,49 @@ function AppointmentCard({appointmentData,handleAppointmentDelete}) {
 
   const handleCancelAppointment= async(e)=>{
     e.preventDefault();
-    try{
-      const res = await axiosPrivate.delete(`appointment/${appointmentData.id}`)
-      if(res.status===200){
-        console.log(res.data)
-        handleAppointmentDelete(appointmentData.doctor_availability)
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You want cancel your appointment.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, cancel it!"
+    })
+
+    if (result.isConfirmed) {
+        try{
+          const res = await axiosPrivate.delete(`appointment/${appointmentData.id}`)
+          if(res?.status===200){
+            handleAppointmentDelete(appointmentData.doctor_availability)
+
+            await Swal.fire({
+              title: "Appointment Cancelled!",
+              text: "Your appointment has been cancelled.",
+              icon: "success"
+            });
+          }
+        }catch(error){
+          if(error?.response?.data ==="UserAccountTypes matching query does not exist."){
+            await Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Appointment not found!",
+            });
+            
+          }
+          else{
+            await Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!",
+            });
+          }
+        }
+        
       }
-      else{
-        console.log(res?.message)
-      }
-    }catch(error){
-      console.error(error)
-    }
+    ;
+    
   }
   return (
     <section className={classes.mainSection}>

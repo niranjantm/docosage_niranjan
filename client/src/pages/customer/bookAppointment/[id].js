@@ -6,6 +6,7 @@ import classes from "@/styles/appointmentBooking.module.css"
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import dayjs from 'dayjs'
 import CustomerAppointmentDetailPopup from '@/components/customerAppointmentDetailPopup'
+import Swal from 'sweetalert2'
 
 function bookAppointment() {
 
@@ -36,7 +37,11 @@ function bookAppointment() {
       }
     }
     catch(error){
-      console.log(error)
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
     }
 
   }
@@ -64,12 +69,13 @@ function bookAppointment() {
           setDoctorAvailability(res.data?.availability)
           setLoading(false)
         }
-        else {
-          setLoading(false)
-        }
       } catch (error) {
-        console.log(error)
         setLoading(false)
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!",
+        });
       }
 
     }

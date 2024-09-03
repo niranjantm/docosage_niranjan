@@ -5,6 +5,7 @@ import Layout from '@/components/Navbar/Layout'
 import practiceData from '@/context/doctorPracticeData'
 import protectedRoutesDoctor from '@/components/doctorProtectedRoutes'
 import { useRouter } from 'next/router'
+import Swal from 'sweetalert2'
 
 function DoctorInformation() {
 
@@ -56,10 +57,17 @@ function DoctorInformation() {
                         const res = await axiosPrivate.post("doctorinfo/",formData)
                         if(res.status === 200){
                             console.log(res.data)
-                           
+                            Swal.fire({
+                                icon: "success",
+                                title: "Information Created",
+                              });
                         }
                     }catch(error){
-                        console.log(error)
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Something went wrong!",
+                          });
                     }
                 }
                 if(e.target.name === "update"){
@@ -67,9 +75,18 @@ function DoctorInformation() {
                         const res = await axiosPrivate.put("doctorinfo/pk/",formData)
                         if(res.status === 200){
                             console.log(res.data)
+                            
+                            Swal.fire({
+                                icon: "success",
+                                title: "Information Updated",
+                              });
                         }
                     }catch(error){
-                        console.log(error)
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Something went wrong!",
+                          });
                     }
                 }
                 
@@ -89,11 +106,36 @@ function DoctorInformation() {
                         setFormData(res.data)
                         setLoading(false)
                     }
+                    else{
+                        console.log(res)
+                    }
                 }
                 catch(error){
                     setOldDoctorInfo(false)
                     setLoading(false)
                     console.log(error)
+                    if(error?.response?.data==="UserAccountTypes matching query does not exist."){
+                        const action = await Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Doctor not found!",
+                            confirmButtonText:"Go Back"
+                          });
+                          if(action?.isConfirmed){
+                            router.back()
+                          }
+                    }else{
+                        const action = await Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Something went wrong!",
+                            confirmButtonText:"Go Back"
+                          });
+                          if(action?.isConfirmed){
+                            router.back()
+                          }
+                    }
+                   
                 }
                 
            

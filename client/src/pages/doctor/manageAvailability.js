@@ -9,11 +9,14 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 import useAxiosPrivate from '@/hooks/useAxiosPrivate'
 import useAuth from '@/hooks/useAuth';
+import Swal from 'sweetalert2';
+import { useRouter } from 'next/router';
 
 function ManageAvailability() {
   const [selectedDates, setSelectedDates] = useState([])
   const [loading,setLoading] = useState(true)
   const [scheduleExist,setScheduleExist] = useState(false)
+  const router = useRouter()
   
   const {userAuth} = useAuth()
   const axiosPrivate = useAxiosPrivate()
@@ -37,8 +40,29 @@ function ManageAvailability() {
         }
         setLoading(false)
       }catch(error){
+        
         setLoading(false)
-        console.log(error)
+        if(error?.response?.data==="UserAccountTypes matching query does not exist."){
+          const action = await Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Doctor not found!",
+              confirmButtonText:"Go Back"
+            });
+            if(action?.isConfirmed){
+              router.back()
+            }
+            }else{
+          const action = await Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!",
+              confirmButtonText:"Go Back"
+            });
+            if(action?.isConfirmed){
+              router.back()
+            }
+      }
       }
      
     } 

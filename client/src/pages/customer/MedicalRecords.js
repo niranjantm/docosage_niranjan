@@ -10,7 +10,7 @@ import { FaFilePdf } from "react-icons/fa";
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/router'
 
-function HealthRecords() {
+function MedicalRecords() {
 
     const baseUrl = "http://localhost:8000"
     const router = useRouter()
@@ -255,5 +255,5 @@ function HealthRecords() {
     )
 }
 
-HealthRecords.NavLayout = Layout;
-export default protectedRoutesCustomer(HealthRecords);
+MedicalRecords.NavLayout = Layout;
+export default protectedRoutesCustomer(MedicalRecords);

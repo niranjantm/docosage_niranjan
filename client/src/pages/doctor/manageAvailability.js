@@ -40,9 +40,16 @@ function ManageAvailability() {
         }
         setLoading(false)
       }catch(error){
-        
+        console.log(error)
         setLoading(false)
-        if(error?.response?.data==="UserAccountTypes matching query does not exist."){
+        if(error?.response?.status===404){
+          await Swal.fire({
+            icon: "info",
+            title: "Availability not record found",
+            confirmButtonText:"Create Availability"
+          });
+        }
+        else if(error?.response?.data==="UserAccountTypes matching query does not exist."){
           const action = await Swal.fire({
               icon: "error",
               title: "Oops...",
@@ -73,25 +80,25 @@ console.log(selectedDates)
 
 
 const checkOverlap = (timeSlots, newStartTime) => {
-  const newStart = dayjs(newStartTime);
-  const now = dayjs(); 
+//   const newStart = dayjs(newStartTime);
+//   const now = dayjs(); 
   
-console.log(newStart)
+// console.log(newStart)
   
-  if (newStart.isBefore(now)) {
-    return { isOverlap: true, isPastTime: true }; 
-  }
+//   if (newStart.isBefore(now)) {
+//     return { isOverlap: true, isPastTime: true }; 
+//   }
 
   
-  for (let i = 0; i < timeSlots.length; i++) {
-    const slot = timeSlots[i];
-    const startTime = dayjs(slot.startTime);
-    console.log(startTime)
+//   for (let i = 0; i < timeSlots.length; i++) {
+//     const slot = timeSlots[i];
+//     const startTime = dayjs(slot.startTime);
+//     console.log(startTime)
 
-    if (newStart.isSame(startTime) ) {
-      return { isOverlap: true, isPastTime: false }; 
-    }
-  }
+//     if (newStart.isSame(startTime) ) {
+//       return { isOverlap: true, isPastTime: false }; 
+//     }
+//   }
   return { isOverlap: false, isPastTime: false };
 };
 
@@ -126,9 +133,21 @@ console.log(newStart)
 
 
 
-  const handleDeleteDate=(date,index)=>{
+  const handleDeleteDate=async (date,index)=>{
     let newDates = selectedDates.filter((_,i)=>i!=index)
     setSelectedDates(newDates)
+
+    try{
+      const deleteSchedule = await axiosPrivate.delete(`doctoravailability/deleterecord/`,{params:{
+        "delete_type":"date",
+        "date":date
+      }})
+      console.log(deleteSchedule.data)
+    }catch(error){
+      console.log(error)
+    }
+
+
   }
 
   
@@ -203,7 +222,7 @@ console.log(newStart)
     );
   };
 
-  const handleSlotDelete = (date, index) => {
+  const handleSlotDelete = async (date,slot,index) => {
     setSelectedDates((prevDates) =>
       prevDates.map((item) =>
         item.date === date
@@ -214,6 +233,18 @@ console.log(newStart)
           : item
       ).filter(item => item.timeSlots.length > 0) 
     )
+    if(slot.slot_id){
+      try{
+        const deleteSchedule = await axiosPrivate.delete(`doctoravailability/deleteslot/`,{params:{
+          "delete_type":"slot",
+          "slot_id":slot.slot_id
+        }})
+        console.log(deleteSchedule.data)
+      }catch(error){
+        console.log(error)
+      }
+     
+    }
   }
 
   const handleCreateAppointmentSlots= async()=>{
@@ -230,20 +261,39 @@ console.log(newStart)
       if(scheduleExist){
         const updatedSchedule = await axiosPrivate.put("doctoravailability/updateschedule/",JSON.stringify({"availability":selectedDates}))
         if(updatedSchedule.status===200){
-          console.log(updatedSchedule.data) //------------->ADD MESSAGE HERE LIKE UPDATED SCHEDULE
+          console.log(updatedSchedule.data)
+          setSelectedDates(updatedSchedule?.data?.availability || [])
+          Swal.fire({
+            icon:"success",
+            title:"Availability updated",
+            confirmButtonText:"OK"
+          })  
         }
       }
       else if(!scheduleExist  && selectedDates.length!==0){
         const newSchedule = await axiosPrivate.post("doctoravailability/",JSON.stringify({"availability":selectedDates}))
         if(newSchedule.status===201){
           setScheduleExist(true)
-          console.log(newSchedule.data) //------------->ADD MESSAGE HERE LIKE CREATED SCHEDULE
+          setSelectedDates(newSchedule?.data?.availability || [])
+          Swal.fire({
+            icon:"success",
+            title:"Availability created",
+            confirmButtonText:"OK"
+          }) 
         }
       }
       
     }
     catch(error){
-      console.log(error)
+      if(error?.response?.status===406){
+        Swal.fire({
+          icon:"error",
+          title:"Start time Overlapping found!",
+          text:error?.response?.data?.message,
+          confirmButtonText:"OK"
+        })
+      }
+      
     }
     
 
@@ -291,8 +341,9 @@ console.log(JSON.stringify(selectedDates))
                    
                     <div key={j} className={classes.StartAndEndTimeWithCloseButton} >
                        
-                      <button onClick={() => handleSlotDelete(item.date, j)} className={classes.singleStartAndEndTime__closeButton}><IoMdCloseCircle size={20} color='red' /></button>
+                      <button onClick={() => handleSlotDelete(item.date,t, j)} className={classes.singleStartAndEndTime__closeButton}><IoMdCloseCircle size={20} color='red' /></button>
                       <div className={classes.singleStartAndEndTime}>
+                      <p>{`Slot:${j+1}`}</p>
                       <label htmlFor='startTime'>Start time</label>
                       {/* <input type='time' id='startTime' value={t.startTime} onChange={(e) => handleTimeChange(item.date, j, 'startTime', e.target.value)}></input> */}
 

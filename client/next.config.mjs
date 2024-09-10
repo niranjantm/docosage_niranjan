@@ -2,7 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   images :{
-    domains: ['localhost'], // Add other domains if needed
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8000',
+        pathname: '/media/health_records/**',
+      },
+    ], // Add other domains if needed
   },
 };
 

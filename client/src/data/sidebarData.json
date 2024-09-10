@@ -1,0 +1,63 @@
+[
+    {
+        "title":"My Profile",
+        "path":"/"
+    },
+    {
+        "title":"Health Records",
+        "children":[
+            {
+                "title":"Upload Medical Records",
+                "path":"/customer/MedicalRecords"
+            },
+            {
+                "title":"Store Medical History",
+                "path":"/"
+            },
+            {
+                "title":"Track Vital Signs",
+                "path":"/"
+            },
+            {
+                "title":"Medication Reminders",
+                "path":"/"
+            }
+        ]
+    },
+    {
+        "title":"Task",
+         "path":"/" 
+    },
+    {
+        "title":"Habits",
+         "path":"/" 
+    },
+    {
+        "title":"Add Members",
+         "path":"/" 
+    },
+    {
+        "title":"Find Doctor",
+         "path":"/dashboard/FindDoctorMenu" 
+    },
+    {
+        "title":"Find Diagnosis",
+         "path":"/" 
+    },
+    {
+        "title":"Order Medication",
+         "path":"/" 
+    },
+    {
+        "title":"Notification Settings",
+         "path":"/" 
+    },
+    {
+        "title":"Help",
+         "path":"/" 
+    },
+    {
+        "title":"Contact Us",
+         "path":"/" 
+    }
+]

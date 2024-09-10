@@ -156,4 +156,17 @@ class PatientHealthRecordFiles(models.Model):
     updated_at = models.DateTimeField(null=True,auto_now=True)
     
     
+class UserMedications(models.Model):
+    user = models.ForeignKey(Users,on_delete=models.CASCADE,related_name="user")
+    name = models.CharField(max_length=255,unique=True)
+    description = models.TextField()
+    dosage = models.CharField(max_length=50)
+    frequency = models.CharField(max_length=50)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True)
+    created_at = models.DateTimeField(null=True,auto_now_add=True)
+    updated_at = models.DateTimeField(null=True,auto_now=True)
+    
+    
+    
     

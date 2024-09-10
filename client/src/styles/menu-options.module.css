@@ -23,6 +23,9 @@
     
     
 }
+.menuArrow:hover{
+    transform: rotate(90deg);
+}
 
 @media screen and (max-width:600px){
     .main{
@@ -115,4 +118,30 @@ margin-bottom: 15px;
 }
 .nameAndEmailDiv{
     margin-left: 20px;
+}
+
+/* -------------------------------- */
+
+.subMenu {
+    margin-left: 20px; /* Indent sub-menu items */
+    padding-left: 10px;
+    border-left: 2px solid #ddd;
+    display: block; /* Initially hidden, shown when open */
+}
+
+/* Rotate arrow when submenu is open */
+.rotate {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
+}
+
+/* Smooth transition for submenu */
+.subMenu {
+    transition: all 0.3s ease;
+}
+
+/* Arrow hover effect */
+.menuArrow:hover {
+    transform: rotate(90deg);
+    transition: transform 0.3s ease;
 }

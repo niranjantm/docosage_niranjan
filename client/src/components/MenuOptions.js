@@ -6,6 +6,8 @@ import useAuth from '@/hooks/useAuth';
 import { useRouter } from 'next/router';
 import { axiosPrivate } from '@/pages/api/axios';
 import Link from 'next/link';
+import items from "@/data/sidebarData.json"
+import SidebarItem from './SidebarItem';
 
 
 function MenuOptions({ showOptions, setShowOptions }) {
@@ -13,6 +15,7 @@ function MenuOptions({ showOptions, setShowOptions }) {
     const options = ["My Profile", "Task", "Habits", "Add Members", "Find Doctor", "Find Diagnosis", "Order Medication", "Notification Settings", "Help", "Contact Us"]
     const menuRef = useRef()
     const { userAuth, setUserAuth } = useAuth()
+    const [openSubmenus, setOpenSubmenus] = useState({});
     const router = useRouter()
 
     useEffect(() => {
@@ -71,14 +74,51 @@ function MenuOptions({ showOptions, setShowOptions }) {
                     </div>
                 </div>
                 <div className={classes.options}>
+                    {/* {data?.map((item,index)=>{
+                        return( */}
 
-                    <Link href={"/"} className={classes.optionWithBorder}  >
+                    {/* {item.children? <div className={classes.optionWithBorder}>{item?.title}</div>: <Link href={item?.path} key={index} className={classes.optionWithBorder}  >
+                        <p className={classes.optionText}>{item?.title}</p>
+                        <FaAngleRight></FaAngleRight>
+                            </Link>} */}
+
+
+                    {items.map((item, index) => (
+                        <div key={index}>
+                            <div
+                                className={classes.optionWithBorder}
+                                onClick={() => item.children ? toggleSubmenu(index) : null}
+                            >
+                                <p className={classes.optionText}>{item.title}</p>
+                                {item.children ?
+                                    <FaAngleRight className={`${classes.menuArrow} ${openSubmenus[index] ? classes.rotate : ''}`} />
+                                    : null
+                                }
+                            </div>
+                            {item.children && openSubmenus[index] && (
+                                <div className={classes.subMenu}>
+                                    {item.children.map((child, childIndex) => (
+                                        <div key={childIndex} className={classes.optionWithoutBorder}>
+                                            <a href={child.path}>{child.title}</a>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+
+
+
+                    {/* )
+                    })} */}
+
+                    {/* <Link href={"/"} className={classes.optionWithBorder}  >
                         <p className={classes.optionText}>My Profile</p>
                         <FaAngleRight></FaAngleRight>
                     </Link>
                     {
-                        userAuth?.account_type === "customer" && <Link href={"/customer/HealthRecords"} className={classes.optionWithBorder}><p className={classes.optionText}>Health Records</p>
-                            <FaAngleRight></FaAngleRight></Link>
+                        userAuth?.account_type === "customer" && <div  className={classes.optionWithBorder}><p className={classes.optionText}>Health Records</p>
+                            <FaAngleRight className={classes.menuArrow}></FaAngleRight> </div>
                     }
                     <Link href={"/"} className={classes.optionWithBorder}  >
                         <p className={classes.optionText}>Task</p>
@@ -115,7 +155,7 @@ function MenuOptions({ showOptions, setShowOptions }) {
                     <Link href={"/"} className={classes.optionWithBorder}  >
                         <p className={classes.optionText}>Contact Us</p>
                         <FaAngleRight></FaAngleRight>
-                    </Link>
+                    </Link> */}
 
                     <button className={classes.optionWithoutBorder} type='button' name={userAuth?.name ? "Logout" : "Login"} onClick={handleOptionClick}>{userAuth?.name ? "Logout" : "Login"} <FaAngleRight></FaAngleRight></button>
                 </div>

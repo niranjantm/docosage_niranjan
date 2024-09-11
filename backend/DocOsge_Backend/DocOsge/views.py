@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group, User
-from .models import LoginUsers, UserAccountTypes, Users, UserInformation, AccountTypes, DoctorInformation, DoctorAvailability, Appointments, PatientHealthRecords, PatientHealthRecordFiles
+from .models import LoginUsers, UserAccountTypes, Users, UserInformation, AccountTypes, DoctorInformation, DoctorAvailability, Appointments, PatientHealthRecords, PatientHealthRecordFiles, UserMedications
 from rest_framework import permissions, viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -7,9 +7,10 @@ from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from django.conf import settings
 from datetime import timedelta, datetime
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.exceptions import InvalidToken
 # from rest_framework_simplejwt.authentication import JWTAuthentication
-from .middlewares import CustomJWTAuthentication
+from .middlewares import CustomJWTAuthentication,verify
 from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.db.models import Q
@@ -1051,23 +1052,102 @@ class PatientHealthRecordView(viewsets.ViewSet):
             return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
         
 class UserMedicationView(viewsets.ViewSet):
-    
+    authentication_classes = [CustomJWTAuthentication]
 
     def create(self,request):
        
-        
+        if isinstance(request.user, AnonymousUser) or request.user is None:
+            return Response({"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        customerId = request.user.get("user_id")
+        request.data["user"] = customerId
+
         try:
+            validCustomer = UserAccountTypes.objects.select_related(
+                "account_type").get(user_id=customerId)
+            if (str(validCustomer.account_type) != 'customer'):
+                return Response({"message": "User is not a customer"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if request.data.get("end_date") == "" or None:
+                request.data.pop("end_date")
+            print(request.data)
+        
             serializer = UserMedicationSerializer(data = request.data)
             if(serializer.is_valid()):
-               
+                serializer.save()
                 data = serializer.data
                 data.pop("created_at")
                 data.pop("updated_at")
                 return Response(data,status=status.HTTP_200_OK)
-            return Response(serializer.errors,status=status.HTTP_200_OK)
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as error:
             return Response({"message": str(error)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def list(self,request):
+       
+        if isinstance(request.user, AnonymousUser) or request.user is None:
+            return Response({"message": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        customerId = request.user.get("user_id")
+        request.data["user"] = customerId
+
+        try:
+            validCustomer = UserAccountTypes.objects.select_related(
+                "account_type").get(user_id=customerId)
+            if (str(validCustomer.account_type) != 'customer'):
+                return Response({"message": "User is not a customer"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            medical_history = UserMedications.objects.filter(user_id = customerId)
+            
+            serializer = UserMedicationSerializer(medical_history,many = True)
+            
+            print(serializer.data)
+            
+            return Response(serializer.data,status=status.HTTP_200_OK)
+            # return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            
+            
+        except Exception as error:
+            return Response(str(error),status=status.HTTP_400_BAD_REQUEST)
+        
+    def destroy(self,request,pk):
+        try:
+            verify(request.user,"customer")
+            
+            medical_history = UserMedications.objects.get(pk=pk)
+            medical_history.delete()
+            
+            return Response({"message":"medication deleted"},status=status.HTTP_200_OK)
+        except UserMedications.DoesNotExist:
+             return Response({"error": "medication does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        except AuthenticationFailed as auth_error:  
+            return Response({"error": str(auth_error)}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as error:
+            return Response(str(error),status=status.HTTP_400_BAD_REQUEST)
+    
+    def update(self, request, pk):
+        try:
+            user = verify(request.user,"customer")
+            if request.data.get("end_date") =="" or None:
+                request.data["end_date"] = None
+            # print(request.data)   2024-09-11 09:22:59.859961
+            
+            medication = get_object_or_404(UserMedications, pk=pk)
+            existing_medication = UserMedications.objects.filter(user=user.get("user_id"), name=request.data.get('name')).exclude(pk=pk)
+            serializer = UserMedicationSerializer(medication, data=request.data, partial=True)
+            
+            
+            if serializer.is_valid():
+                serializer.save()
+                print(serializer.data)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            return Response({'message': str(error)}, status=status.HTTP_400_BAD_REQUEST)
+        
+       
+        
             
             
         

@@ -158,7 +158,7 @@ class PatientHealthRecordFiles(models.Model):
     
 class UserMedications(models.Model):
     user = models.ForeignKey(Users,on_delete=models.CASCADE,related_name="user")
-    name = models.CharField(max_length=255,unique=True)
+    name = models.CharField(max_length=255)
     description = models.TextField()
     dosage = models.CharField(max_length=50)
     frequency = models.CharField(max_length=50)
@@ -167,6 +167,8 @@ class UserMedications(models.Model):
     created_at = models.DateTimeField(null=True,auto_now_add=True)
     updated_at = models.DateTimeField(null=True,auto_now=True)
     
+    class Meta:
+        unique_together = ('user', 'name')
     
     
     

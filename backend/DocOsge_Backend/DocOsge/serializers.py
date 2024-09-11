@@ -120,6 +120,9 @@ class AppointmentSerializer(serializers.ModelSerializer):
         
     
 class UserMedicationSerializer(serializers.ModelSerializer):
+    end_date = serializers.DateField(required = False,allow_null = True)
+    # created_at = serializers.DateTimeField(write_only = True)
+    # updated_at = serializers.DateTimeField(write_only = True)
     class Meta:
         model = UserMedications
         fields = "__all__"
